@@ -1,6 +1,6 @@
 title: Lemon Recipes
 description: "Menu de la semaine du 21–27 juillet 2025"
-theme: gitbook
+theme: minima
 sass:
   style: compressed
 show_excerpts: false
