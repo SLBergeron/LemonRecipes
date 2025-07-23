@@ -1,9 +1,9 @@
 ---
-layout: page          # “page” is built into minima
-title: "Plan repas — semaine du 21–27 juillet 2025"
-permalink: /
+layout: post
+title: "Plan repas — semaine du 21 → 27 juillet 2025"
+date: 2025-07-23
+categories: weekly-menu
 ---
-
 <!-- ↓ Paste ONLY the body of your Lemon-yellow HTML here ↓ -->
 <body>
   <h1>Lemon Recipes</h1>
