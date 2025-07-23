@@ -1,0 +1,80 @@
+/* import Minima defaults first */
+@import "minima";
+
+/* Lemon theme tokens */
+:root {
+  --lemon: #fad02e;
+  --card-bg: #ffffff;
+  --shadow: rgba(0, 0, 0, 0.07);
+  --radius: 14px;
+}
+
+/* layout wrapper added earlier */
+.layout {
+  display: flex;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* sidebar already styled; only tweak width if wanted */
+.sidebar { min-width: 240px; }
+
+/* recipe grid */
+.recipes {
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  padding: 0;        /* remove MD list spacing */
+}
+
+/* individual card */
+.card {
+  background: var(--card-bg);
+  border: 2px solid var(--lemon);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 10px var(--shadow);
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+}
+
+/* number badge */
+.card .num {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--lemon);
+}
+
+/* emoji / icon */
+.card .icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+/* recipe title */
+.card h3 {
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+/* ingredient + step lists (Markdown will emit <p> / <ul>) */
+.card p, .card ul, .card li {
+  margin: 0;
+  font-size: .9rem;
+  line-height: 1.45;
+}
+
+/* grocery list at bottom */
+.recipes + .grocery {
+  margin-top: 2rem;
+  padding: 1rem;
+  border-radius: var(--radius);
+  background: #fffbea;
+  border: 1px solid #f5e18c;
+}
+
+/* responsiveness tweaks */
+@media (max-width: 540px) {
+  .sidebar { display: none; }      /* hide sidebar on very small screens */
+}
