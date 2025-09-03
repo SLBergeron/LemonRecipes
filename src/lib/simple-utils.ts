@@ -121,25 +121,41 @@ export function calculateRecipeAvailability(
   const ingredient_availability: Record<string, { available: boolean; pantry_item_id?: string; reason?: string }> = {}
   const pantryItems = pantry.categories.flatMap(cat => cat.items)
   
+  console.log(`🔍 Checking availability for recipe: ${recipe.title}`)
+  
   for (const ingredient of recipe.ingredients) {
-    if (ingredient.optional) continue
+    if (ingredient.optional) {
+      console.log(`  ⏭️  Skipping optional ingredient: ${ingredient.name}`)
+      continue
+    }
+    
+    console.log(`  📝 Checking: ${ingredient.name} (${ingredient.amount} ${ingredient.unit})`)
     
     // First try to find by pantry_item_id if provided
     let pantryItem = ingredient.pantry_item_id 
       ? pantryItems.find(item => item.id === ingredient.pantry_item_id)
       : null
     
+    if (pantryItem) {
+      console.log(`    ✅ Found by ID: ${pantryItem.name} (${pantryItem.current_amount} ${pantryItem.unit})`)
+    }
+    
     // Fall back to name matching if no pantry_item_id or not found
     if (!pantryItem) {
+      console.log(`    🔍 Searching by name (pantry_item_id: ${ingredient.pantry_item_id || 'none'})`)
       pantryItem = pantryItems.find(item => 
         item.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
         ingredient.name.toLowerCase().includes(item.name.toLowerCase()) ||
         // Additional fuzzy matching
         normalizeIngredientName(item.name) === normalizeIngredientName(ingredient.name)
       )
+      if (pantryItem) {
+        console.log(`    ✅ Found by name: ${pantryItem.name} (${pantryItem.current_amount} ${pantryItem.unit})`)
+      }
     }
     
     if (!pantryItem) {
+      console.log(`    ❌ NOT FOUND: ${ingredient.name}`)
       missing.push(ingredient.name)
       ingredient_availability[ingredient.name] = {
         available: false,
@@ -152,6 +168,7 @@ export function calculateRecipeAvailability(
     const hasEnough = checkQuantityAvailability(ingredient, pantryItem)
     if (!hasEnough) {
       const shortageReason = `Need ${ingredient.amount} ${ingredient.unit}, have ${pantryItem.current_amount} ${pantryItem.unit}`
+      console.log(`    ⚠️  INSUFFICIENT: ${shortageReason}`)
       missing.push(`${ingredient.name} (${shortageReason})`)
       ingredient_availability[ingredient.name] = {
         available: false,
@@ -159,12 +176,15 @@ export function calculateRecipeAvailability(
         reason: shortageReason
       }
     } else {
+      console.log(`    ✅ SUFFICIENT: ${ingredient.name}`)
       ingredient_availability[ingredient.name] = {
         available: true,
         pantry_item_id: pantryItem.id
       }
     }
   }
+  
+  console.log(`📊 Recipe ${recipe.title}: ${missing.length === 0 ? 'CAN MAKE' : `MISSING ${missing.length} ingredients`}`)
   
   return {
     can_make: missing.length === 0,

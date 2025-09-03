@@ -471,7 +471,13 @@ function RecipeCard({ recipe, onClick }: RecipeCardProps) {
         
         <div className="text-sm">
           <Badge variant={recipe.can_make ? "default" : "secondary"}>
-            {recipe.can_make ? 'Can Make' : `Missing ${recipe.missing_ingredients?.length || 0} items`}
+            {recipe.can_make ? 'Can Make' : (() => {
+              // Count actual missing non-optional ingredients based on availability data
+              const missingCount = recipe.ingredients.filter(ing => 
+                !ing.optional && recipe.ingredient_availability?.[ing.name]?.available !== true
+              ).length
+              return `Missing ${missingCount} ingredients`
+            })()}
           </Badge>
         </div>
       </CardContent>
@@ -529,13 +535,14 @@ function RecipeDetail({ recipe, onBack, onDelete }: RecipeDetailProps) {
             <div className="space-y-2">
               {recipe.ingredients.map((ingredient, index) => {
                 const availability = recipe.ingredient_availability?.[ingredient.name]
-                const isAvailable = availability?.available !== false
-                const isMissing = !isAvailable && !ingredient.optional
+                const isAvailable = availability?.available === true
+                const isMissing = availability?.available === false && !ingredient.optional
+                const isUnknown = !availability && !ingredient.optional
                 
                 return (
                   <div key={index} className="flex items-center justify-between">
                     <span className={`${ingredient.optional ? 'text-muted-foreground italic' : ''} ${
-                      isMissing ? 'text-orange-700 font-medium' : ''
+                      isMissing || isUnknown ? 'text-orange-700 font-medium' : ''
                     }`}>
                       {ingredient.amount} {ingredient.unit} {ingredient.name}
                       {ingredient.optional && ' (optional)'}
@@ -546,7 +553,12 @@ function RecipeDetail({ recipe, onBack, onDelete }: RecipeDetailProps) {
                           Missing
                         </Badge>
                       )}
-                      {isAvailable && !ingredient.optional && (
+                      {isUnknown && (
+                        <Badge variant="outline" className="text-gray-600 border-gray-200">
+                          Unknown
+                        </Badge>
+                      )}
+                      {isAvailable && (
                         <Badge variant="outline" className="text-green-600 border-green-200">
                           Available
                         </Badge>
