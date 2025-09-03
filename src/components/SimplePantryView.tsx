@@ -3,9 +3,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Minus, Trash2, Package, AlertTriangle, Check, X } from "lucide-react"
+import { Plus, Minus, Trash2, Package, AlertTriangle, Check, ChevronDown, Edit3 } from "lucide-react"
 import { useSimplePantry } from '@/hooks/useSimplePantry'
 import { DEFAULT_CATEGORIES, COMMON_UNITS } from '@/types/simple'
 import type { SimplePantryItem } from '@/types/simple'
@@ -18,6 +17,7 @@ export function SimplePantryView() {
     addItem, 
     updateItemAmount, 
     updateItemUnit,
+    updateItemRestockLevel,
     deleteItem, 
     getItemsByCategory, 
     getLowStockItems, 
@@ -101,6 +101,14 @@ export function SimplePantryView() {
     }
   }
 
+  const handleUpdateRestockLevel = async (itemId: string, newLevel: number) => {
+    try {
+      await updateItemRestockLevel(itemId, newLevel)
+    } catch (err) {
+      console.error('Failed to update restock level:', err)
+    }
+  }
+
   const handleDeleteItem = async (itemId: string) => {
     if (confirm('Remove this item from your pantry?')) {
       try {
@@ -112,48 +120,38 @@ export function SimplePantryView() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 p-4 sm:p-6 max-w-6xl mx-auto">
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold">{stats.totalItems}</div>
-            <p className="text-sm text-muted-foreground">Total Items</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold">{stats.categories}</div>
-            <p className="text-sm text-muted-foreground">Active Categories</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-destructive">{stats.lowStockCount}</div>
-            <p className="text-sm text-muted-foreground">Low Stock</p>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
+        <div className="bg-white rounded-lg border p-3">
+          <div className="text-lg sm:text-2xl font-bold">{stats.totalItems}</div>
+          <p className="text-xs sm:text-sm text-muted-foreground">Total Items</p>
+        </div>
+        <div className="bg-white rounded-lg border p-3">
+          <div className="text-lg sm:text-2xl font-bold">{stats.categories}</div>
+          <p className="text-xs sm:text-sm text-muted-foreground">Categories</p>
+        </div>
+        <div className="bg-white rounded-lg border p-3">
+          <div className="text-lg sm:text-2xl font-bold text-destructive">{stats.lowStockCount}</div>
+          <p className="text-xs sm:text-sm text-muted-foreground">Low Stock</p>
+        </div>
       </div>
 
       {/* Low Stock Alert */}
       {lowStockItems.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-orange-800 flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5" />
-              Low Stock Items
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {lowStockItems.map(item => (
-                <Badge key={item.id} variant="outline" className="border-orange-300 text-orange-800">
-                  {item.name}: {item.current_amount} {item.unit}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle className="h-4 w-4 text-orange-600" />
+            <h3 className="font-medium text-orange-800">Low Stock Items</h3>
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {lowStockItems.map(item => (
+              <Badge key={item.id} variant="outline" className="border-orange-300 text-orange-800 text-xs">
+                {item.name}: {item.current_amount} {item.unit}
+              </Badge>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* Controls */}
@@ -182,30 +180,32 @@ export function SimplePantryView() {
 
       {/* Add Item Form */}
       {showAddForm && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Add New Item</CardTitle>
-            <CardDescription>Add an item to your pantry inventory</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="item-name">Name</Label>
+        <div className="bg-white rounded-lg border p-4">
+          <div className="mb-4">
+            <h3 className="font-medium">Add New Item</h3>
+            <p className="text-sm text-muted-foreground">Add an item to your pantry inventory</p>
+          </div>
+          
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="item-name" className="text-sm">Name</Label>
                 <Input
                   id="item-name"
                   value={newItem.name}
                   onChange={(e) => setNewItem(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="e.g., Olive Oil"
+                  className="mt-1"
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="item-category">Category</Label>
+              <div>
+                <Label htmlFor="item-category" className="text-sm">Category</Label>
                 <Select 
                   value={newItem.categoryId} 
                   onValueChange={(value) => setNewItem(prev => ({ ...prev, categoryId: value }))}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="mt-1">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -219,9 +219,9 @@ export function SimplePantryView() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="item-amount">Amount</Label>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="item-amount" className="text-sm">Amount</Label>
                 <Input
                   id="item-amount"
                   type="number"
@@ -229,16 +229,17 @@ export function SimplePantryView() {
                   step="0.1"
                   value={newItem.amount}
                   onChange={(e) => setNewItem(prev => ({ ...prev, amount: parseFloat(e.target.value) || 0 }))}
+                  className="mt-1"
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="item-unit">Unit</Label>
+              <div>
+                <Label htmlFor="item-unit" className="text-sm">Unit</Label>
                 <Select 
                   value={newItem.unit} 
                   onValueChange={(value) => setNewItem(prev => ({ ...prev, unit: value }))}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="mt-1">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -252,16 +253,16 @@ export function SimplePantryView() {
               </div>
             </div>
 
-            <div className="flex gap-2">
-              <Button onClick={handleAddItem} disabled={!newItem.name.trim()}>
+            <div className="flex gap-2 pt-2">
+              <Button onClick={handleAddItem} disabled={!newItem.name.trim()} size="sm">
                 Add Item
               </Button>
-              <Button variant="outline" onClick={() => setShowAddForm(false)}>
+              <Button variant="outline" onClick={() => setShowAddForm(false)} size="sm">
                 Cancel
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Items List */}
@@ -274,29 +275,26 @@ export function SimplePantryView() {
           if (categoryItems.length === 0) return null
 
           return (
-            <Card key={category.id}>
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2">
-                  <span className="text-2xl">{category.emoji}</span>
-                  {category.name}
-                  <Badge variant="secondary">{categoryItems.length}</Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-3">
-                  {categoryItems.map(item => (
-                    <ItemRow
-                      key={item.id}
-                      item={item}
-                      onUpdateAmount={handleUpdateAmount}
-                      onUpdateDirectAmount={handleDirectUpdateAmount}
-                      onUpdateUnit={handleUpdateUnit}
-                      onDelete={handleDeleteItem}
-                    />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <div key={category.id} className="space-y-3">
+              <div className="flex items-center gap-2 px-1">
+                <span className="text-lg">{category.emoji}</span>
+                <h3 className="font-medium text-gray-900">{category.name}</h3>
+                <Badge variant="secondary" className="text-xs">{categoryItems.length}</Badge>
+              </div>
+              <div className="space-y-2">
+                {categoryItems.map(item => (
+                  <ItemRow
+                    key={item.id}
+                    item={item}
+                    onUpdateAmount={handleUpdateAmount}
+                    onUpdateDirectAmount={handleDirectUpdateAmount}
+                    onUpdateUnit={handleUpdateUnit}
+                    onUpdateRestockLevel={handleUpdateRestockLevel}
+                    onDelete={handleDeleteItem}
+                  />
+                ))}
+              </div>
+            </div>
           )
         })}
       </div>
@@ -321,14 +319,18 @@ interface ItemRowProps {
   onUpdateAmount: (itemId: string, currentAmount: number, delta: number) => void
   onUpdateDirectAmount: (itemId: string, newAmount: number) => void
   onUpdateUnit: (itemId: string, newUnit: string) => void
+  onUpdateRestockLevel: (itemId: string, newLevel: number) => void
   onDelete: (itemId: string) => void
 }
 
-function ItemRow({ item, onUpdateAmount, onUpdateDirectAmount, onUpdateUnit, onDelete }: ItemRowProps) {
+function ItemRow({ item, onUpdateAmount, onUpdateDirectAmount, onUpdateUnit, onUpdateRestockLevel, onDelete }: ItemRowProps) {
+  const [expanded, setExpanded] = useState(false)
   const [isEditingAmount, setIsEditingAmount] = useState(false)
   const [isEditingUnit, setIsEditingUnit] = useState(false)
+  const [isEditingRestock, setIsEditingRestock] = useState(false)
   const [editAmount, setEditAmount] = useState(item.current_amount.toString())
   const [editUnit, setEditUnit] = useState(item.unit)
+  const [editRestock, setEditRestock] = useState((item.normal_restock_level || 0).toString())
 
   const isLowStock = item.low_stock_threshold 
     ? item.current_amount <= item.low_stock_threshold
@@ -336,8 +338,8 @@ function ItemRow({ item, onUpdateAmount, onUpdateDirectAmount, onUpdateUnit, onD
       ? item.current_amount < 2
       : item.current_amount < 1
 
-  // Calculate stock status for progress bar
-  const restockLevel = item.normal_restock_level || (item.current_amount * 2)
+  // Calculate stock status for progress bar - fixed calculation
+  const restockLevel = item.normal_restock_level || Math.max(item.current_amount * 2, 100)
   const stockPercentage = Math.min((item.current_amount / restockLevel) * 100, 100)
 
   const handleSaveAmount = () => {
@@ -348,11 +350,6 @@ function ItemRow({ item, onUpdateAmount, onUpdateDirectAmount, onUpdateUnit, onD
     setIsEditingAmount(false)
   }
 
-  const handleCancelAmount = () => {
-    setEditAmount(item.current_amount.toString())
-    setIsEditingAmount(false)
-  }
-
   const handleSaveUnit = () => {
     if (editUnit !== item.unit) {
       onUpdateUnit(item.id, editUnit)
@@ -360,156 +357,239 @@ function ItemRow({ item, onUpdateAmount, onUpdateDirectAmount, onUpdateUnit, onD
     setIsEditingUnit(false)
   }
 
-  const handleCancelUnit = () => {
-    setEditUnit(item.unit)
-    setIsEditingUnit(false)
+  const handleSaveRestock = () => {
+    const newLevel = parseFloat(editRestock)
+    if (!isNaN(newLevel) && newLevel > 0) {
+      onUpdateRestockLevel(item.id, newLevel)
+    }
+    setIsEditingRestock(false)
   }
 
   return (
-    <div className="p-3 sm:p-4 border rounded-lg space-y-3 sm:space-y-2">
-      {/* Header Row - Name and Status */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-base truncate">{item.name}</h4>
-          <div className="flex items-center gap-2 mt-1">
+    <div className="border rounded-lg transition-all duration-200 hover:shadow-sm bg-white">
+      {/* Compact Header */}
+      <div 
+        className="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50 transition-colors"
+        onClick={() => setExpanded(!expanded)}
+      >
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          {/* Stock indicator */}
+          <div className="relative">
+            <div className={`w-3 h-3 rounded-full ${
+              isLowStock ? 'bg-red-500' : 
+              stockPercentage > 60 ? 'bg-green-500' : 
+              'bg-yellow-500'
+            }`} />
             {isLowStock && (
-              <Badge variant="destructive" className="text-xs px-1 py-0">
-                Low Stock
-              </Badge>
+              <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-600 rounded-full animate-pulse" />
             )}
-            {item.normal_restock_level && (
-              <Badge variant="outline" className="text-xs px-1 py-0">
-                Target: {item.normal_restock_level} {item.unit}
-              </Badge>
-            )}
+          </div>
+          
+          {/* Name and amount */}
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-medium truncate">{item.name}</div>
+            <div className="text-xs text-muted-foreground">
+              {item.current_amount} {item.unit}
+              {isLowStock && <span className="text-red-600 ml-1">• Low</span>}
+            </div>
+          </div>
+          
+          {/* Quick actions */}
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                onUpdateAmount(item.id, item.current_amount, -1)
+              }}
+              disabled={item.current_amount <= 0}
+              className="h-6 w-6 p-0"
+            >
+              <Minus className="h-3 w-3" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                onUpdateAmount(item.id, item.current_amount, 1)
+              }}
+              className="h-6 w-6 p-0"
+            >
+              <Plus className="h-3 w-3" />
+            </Button>
           </div>
         </div>
         
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onDelete(item.id)}
-          className="text-destructive hover:text-destructive flex-shrink-0"
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        {/* Expand indicator */}
+        <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${
+          expanded ? 'rotate-180' : ''
+        }`} />
       </div>
 
-      {/* Stock Progress Bar */}
-      <div className="space-y-1">
-        <div className="flex justify-between text-xs text-muted-foreground">
-          <span>Current Stock</span>
-          <span>{Math.round(stockPercentage)}%</span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
-            className={`h-2 rounded-full transition-all ${
-              stockPercentage > 60 ? 'bg-green-500' : 
-              stockPercentage > 30 ? 'bg-yellow-500' : 
-              'bg-red-500'
-            }`}
-            style={{ width: `${stockPercentage}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Amount and Unit Controls */}
-      <div className="flex items-center justify-between gap-2">
-        {/* Decrease Button */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onUpdateAmount(item.id, item.current_amount, -1)}
-          disabled={item.current_amount <= 0 || isEditingAmount}
-          className="flex-shrink-0"
-        >
-          <Minus className="h-3 w-3" />
-        </Button>
-
-        {/* Amount Display/Edit */}
-        <div className="flex-1 flex items-center justify-center gap-2">
-          {isEditingAmount ? (
-            <div className="flex items-center gap-1">
-              <Input
-                type="number"
-                value={editAmount}
-                onChange={(e) => setEditAmount(e.target.value)}
-                className="w-20 h-8 text-sm text-center"
-                step="0.1"
-                min="0"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSaveAmount()
-                  if (e.key === 'Escape') handleCancelAmount()
-                }}
-                autoFocus
-                onBlur={handleSaveAmount}
+      {/* Expanded Details */}
+      {expanded && (
+        <div className="border-t bg-gray-50/50 p-3 space-y-3">
+          {/* Stock Progress Bar */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-muted-foreground">Stock Level</span>
+              <span className="font-medium">{Math.round(stockPercentage)}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  stockPercentage > 60 ? 'bg-green-500' : 
+                  stockPercentage > 30 ? 'bg-yellow-500' : 
+                  'bg-red-500'
+                }`}
+                style={{ width: `${stockPercentage}%` }}
               />
-              <Button size="sm" variant="ghost" onClick={handleSaveAmount} className="h-6 w-6 p-0">
-                <Check className="h-3 w-3 text-green-600" />
+            </div>
+            {item.normal_restock_level && (
+              <div className="text-xs text-muted-foreground">
+                Target: {item.normal_restock_level} {item.unit}
+              </div>
+            )}
+          </div>
+
+          {/* Detailed Controls */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* Amount editing */}
+            <div className="space-y-1">
+              <Label className="text-xs">Current Amount</Label>
+              {isEditingAmount ? (
+                <div className="flex items-center gap-1">
+                  <Input
+                    type="number"
+                    value={editAmount}
+                    onChange={(e) => setEditAmount(e.target.value)}
+                    className="h-8 text-sm"
+                    step="0.1"
+                    min="0"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveAmount()
+                      if (e.key === 'Escape') {
+                        setEditAmount(item.current_amount.toString())
+                        setIsEditingAmount(false)
+                      }
+                    }}
+                    autoFocus
+                  />
+                  <Button size="sm" variant="ghost" onClick={handleSaveAmount} className="h-8 w-8 p-0">
+                    <Check className="h-3 w-3" />
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditingAmount(true)}
+                  className="h-8 justify-start font-mono"
+                >
+                  <Edit3 className="h-3 w-3 mr-2" />
+                  {item.current_amount}
+                </Button>
+              )}
+            </div>
+
+            {/* Unit editing */}
+            <div className="space-y-1">
+              <Label className="text-xs">Unit</Label>
+              {isEditingUnit ? (
+                <div className="flex items-center gap-1">
+                  <Select value={editUnit} onValueChange={setEditUnit}>
+                    <SelectTrigger className="h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {COMMON_UNITS.map(unit => (
+                        <SelectItem key={unit} value={unit}>
+                          {unit}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button size="sm" variant="ghost" onClick={handleSaveUnit} className="h-8 w-8 p-0">
+                    <Check className="h-3 w-3" />
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditingUnit(true)}
+                  className="h-8 justify-start"
+                >
+                  <Edit3 className="h-3 w-3 mr-2" />
+                  {item.unit}
+                </Button>
+              )}
+            </div>
+
+            {/* Restock level editing */}
+            <div className="space-y-1">
+              <Label className="text-xs">Target Level</Label>
+              {isEditingRestock ? (
+                <div className="flex items-center gap-1">
+                  <Input
+                    type="number"
+                    value={editRestock}
+                    onChange={(e) => setEditRestock(e.target.value)}
+                    className="h-8 text-sm"
+                    step="1"
+                    min="1"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveRestock()
+                      if (e.key === 'Escape') {
+                        setEditRestock((item.normal_restock_level || 0).toString())
+                        setIsEditingRestock(false)
+                      }
+                    }}
+                    autoFocus
+                  />
+                  <Button size="sm" variant="ghost" onClick={handleSaveRestock} className="h-8 w-8 p-0">
+                    <Check className="h-3 w-3" />
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditingRestock(true)}
+                  className="h-8 justify-start"
+                >
+                  <Edit3 className="h-3 w-3 mr-2" />
+                  {item.normal_restock_level || 'Set'}
+                </Button>
+              )}
+            </div>
+
+            {/* Delete button */}
+            <div className="space-y-1">
+              <Label className="text-xs">Actions</Label>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onDelete(item.id)}
+                className="h-8 text-destructive hover:text-destructive justify-start"
+              >
+                <Trash2 className="h-3 w-3 mr-2" />
+                Remove
               </Button>
             </div>
-          ) : (
-            <button
-              onClick={() => setIsEditingAmount(true)}
-              className="font-mono text-lg hover:bg-gray-100 px-3 py-2 rounded transition-colors"
-              title="Click to edit amount"
-            >
-              {item.current_amount}
-            </button>
-          )}
-          
-          {/* Unit Display/Edit */}
-          {isEditingUnit ? (
-            <div className="flex items-center gap-1">
-              <Select value={editUnit} onValueChange={setEditUnit}>
-                <SelectTrigger className="w-20 h-8 text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {COMMON_UNITS.map(unit => (
-                    <SelectItem key={unit} value={unit}>
-                      {unit}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button size="sm" variant="ghost" onClick={handleSaveUnit} className="h-6 w-6 p-0">
-                <Check className="h-3 w-3 text-green-600" />
-              </Button>
-              <Button size="sm" variant="ghost" onClick={handleCancelUnit} className="h-6 w-6 p-0">
-                <X className="h-3 w-3 text-red-600" />
-              </Button>
-            </div>
-          ) : (
-            <button
-              onClick={() => setIsEditingUnit(true)}
-              className="text-sm text-muted-foreground hover:bg-gray-100 px-2 py-1 rounded transition-colors"
-              title="Click to change unit"
-            >
-              {item.unit}
-            </button>
-          )}
+          </div>
+
+          {/* Additional info */}
+          <div className="text-xs text-muted-foreground pt-2 border-t flex justify-between">
+            <span>Added by {item.added_by}</span>
+            {item.min_buy_amount && (
+              <span>Min buy: {item.min_buy_amount} {item.unit}</span>
+            )}
+          </div>
         </div>
-
-        {/* Increase Button */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onUpdateAmount(item.id, item.current_amount, 1)}
-          disabled={isEditingAmount}
-          className="flex-shrink-0"
-        >
-          <Plus className="h-3 w-3" />
-        </Button>
-      </div>
-
-      {/* Additional Info */}
-      <div className="text-xs text-muted-foreground flex justify-between items-center">
-        <span>Added by {item.added_by}</span>
-        {item.min_buy_amount && (
-          <span>Min buy: {item.min_buy_amount} {item.unit}</span>
-        )}
-      </div>
+      )}
     </div>
   )
 }

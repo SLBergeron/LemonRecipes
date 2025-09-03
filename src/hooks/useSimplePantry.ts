@@ -157,6 +157,27 @@ export function useSimplePantry() {
     savePantryToStorage(updatedPantry)
   }, [pantry, savePantryToStorage])
 
+  // Update item restock level
+  const updateItemRestockLevel = useCallback((itemId: string, newLevel: number) => {
+    if (!pantry) return
+
+    const updatedPantry: SimplePantryInventory = {
+      ...pantry,
+      last_updated: new Date().toISOString(),
+      categories: pantry.categories.map(category => ({
+        ...category,
+        items: category.items.map(item =>
+          item.id === itemId
+            ? { ...item, normal_restock_level: newLevel, updated_at: new Date().toISOString() }
+            : item
+        )
+      }))
+    }
+
+    setPantry(updatedPantry)
+    savePantryToStorage(updatedPantry)
+  }, [pantry, savePantryToStorage])
+
   // Delete item from pantry
   const deleteItem = useCallback((itemId: string) => {
     if (!pantry) return
@@ -280,6 +301,7 @@ export function useSimplePantry() {
     addItem,
     updateItemAmount,
     updateItemUnit,
+    updateItemRestockLevel,
     deleteItem,
     getItemsByCategory,
     getLowStockItems,
