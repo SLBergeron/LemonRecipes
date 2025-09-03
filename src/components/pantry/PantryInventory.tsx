@@ -134,8 +134,8 @@ export function PantryInventory({ pantry }: PantryInventoryProps) {
         <div
           key={notification.id}
           className={`p-3 rounded-md border ${
-            notification.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
-            notification.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+            notification.type === 'sync_success' ? 'bg-green-50 border-green-200 text-green-800' :
+            notification.type === 'sync_conflict' ? 'bg-red-50 border-red-200 text-red-800' :
             'bg-blue-50 border-blue-200 text-blue-800'
           }`}
         >

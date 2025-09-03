@@ -10,12 +10,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import type { AddCategoryFormData } from "@/types/pantry"
+import type { AddCategoryFormData, PantryCategory } from "@/types/pantry"
 
 interface AddCategoryModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onAddCategory: (formData: AddCategoryFormData) => Promise<void>
+  onAddCategory: (formData: AddCategoryFormData) => Promise<PantryCategory>
   loading?: boolean
 }
 

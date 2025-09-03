@@ -12,7 +12,6 @@ import {
   createPantryItem,
   createPantryCategory,
   createChangeLog,
-  getUserIdentity,
   generateId,
   sortPantryItems
 } from '@/lib/pantry-utils'
@@ -433,7 +432,7 @@ export function usePantryInventory() {
   }, [updateItem])
 
   // Check if item is available in pantry
-  const isItemAvailable = useCallback((itemId: string, requiredAmount?: string): boolean => {
+  const isItemAvailable = useCallback((itemId: string): boolean => {
     if (!pantry) return false
     
     for (const category of pantry.categories) {
@@ -497,6 +496,7 @@ export function usePantryInventory() {
     // CRUD Operations
     addItem,
     updateItem,
+    deleteItem: removeItem,
     removeItem,
     addCategory,
     updateCategory,

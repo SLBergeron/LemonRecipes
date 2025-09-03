@@ -17,7 +17,7 @@ import { PANTRY_UNITS, validateItemForm } from "@/lib/pantry-utils"
 interface EditItemModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onUpdateItem: (itemId: string, updates: Partial<PantryItem>) => Promise<void>
+  onUpdateItem: (itemId: string, updates: Partial<PantryItem>) => Promise<PantryItem>
   onDeleteItem: (itemId: string) => Promise<void>
   item: PantryItem | null
   categories: PantryCategory[]

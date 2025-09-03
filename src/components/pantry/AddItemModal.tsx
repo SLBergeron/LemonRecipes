@@ -11,13 +11,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import type { AddItemFormData, PantryCategory } from "@/types/pantry"
+import type { AddItemFormData, PantryCategory, PantryItem } from "@/types/pantry"
 import { PANTRY_UNITS, validateItemForm } from "@/lib/pantry-utils"
 
 interface AddItemModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onAddItem: (formData: AddItemFormData) => Promise<void>
+  onAddItem: (formData: AddItemFormData) => Promise<PantryItem>
   categories: PantryCategory[]
   loading?: boolean
 }

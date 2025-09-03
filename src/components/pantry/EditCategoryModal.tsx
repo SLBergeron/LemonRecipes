@@ -15,7 +15,7 @@ import type { PantryCategory } from "@/types/pantry"
 interface EditCategoryModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onUpdateCategory: (categoryId: string, updates: Partial<PantryCategory>) => Promise<void>
+  onUpdateCategory: (categoryId: string, updates: Partial<PantryCategory>) => Promise<PantryCategory>
   onDeleteCategory: (categoryId: string) => Promise<void>
   category: PantryCategory | null
   loading?: boolean

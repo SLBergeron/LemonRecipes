@@ -1,5 +1,7 @@
 import type { PantryItem, PantryCategory, PantryChangeLog, AddItemFormData, AddCategoryFormData } from '@/types/pantry'
 
+export { PANTRY_UNITS } from '@/types/pantry'
+
 // Generate unique IDs
 export function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
@@ -203,9 +205,7 @@ export function validateCategoryForm(data: AddCategoryFormData): string[] {
     errors.push('Category emoji is required')
   }
   
-  if (!data.color) {
-    errors.push('Category color is required')
-  }
+  // Color is optional for categories, defaulted in createPantryCategory
   
   return errors
 }
