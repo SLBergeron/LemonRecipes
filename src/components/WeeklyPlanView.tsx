@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar, Plus, Check, Clock, Users, Trash2, ChefHat } from "lucide-react"
+import { Calendar, Plus, Check, Clock, Users, Trash2, ChefHat, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react"
 import { useWeeklyPlan } from '@/hooks/useWeeklyPlan'
 import { useSimpleRecipes } from '@/hooks/useSimpleRecipes'
 import { useSimplePantry } from '@/hooks/useSimplePantry'
@@ -32,6 +32,7 @@ export function WeeklyPlanView() {
   const { recipes } = useSimpleRecipes(pantry)
   const {
     currentPlan,
+    currentWeek,
     loading,
     error,
     addMealToPlan,
@@ -39,7 +40,9 @@ export function WeeklyPlanView() {
     markMealCompleted,
     getMealsForDay,
     getPlanStats,
-    createNextWeekPlan
+    goToPreviousWeek,
+    goToNextWeek,
+    goToCurrentWeek
   } = useWeeklyPlan(recipes, pantry)
 
   const [showAddMeal, setShowAddMeal] = useState(false)
@@ -106,19 +109,27 @@ export function WeeklyPlanView() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header with Week Navigation */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Week of {formatWeekRange(currentPlan.week_of)}</h2>
+          <div className="flex items-center gap-2 mb-2">
+            <Button variant="outline" size="sm" onClick={goToPreviousWeek}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <h2 className="text-2xl font-bold">Week of {formatWeekRange(currentWeek)}</h2>
+            <Button variant="outline" size="sm" onClick={goToNextWeek}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={goToCurrentWeek} title="Go to current week">
+              <RotateCcw className="h-4 w-4" />
+            </Button>
+          </div>
           <p className="text-muted-foreground">Plan your meals for the week</p>
         </div>
         <div className="flex gap-2">
           <Button onClick={() => setShowAddMeal(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Add Meal
-          </Button>
-          <Button variant="outline" onClick={createNextWeekPlan}>
-            Next Week
           </Button>
         </div>
       </div>

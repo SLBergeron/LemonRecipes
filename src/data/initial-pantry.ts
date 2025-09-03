@@ -21,18 +21,18 @@ export const initialPantryData: SimplePantryItem[] = [
   { id: 'frozen-edamame', name: 'Frozen Edamame', current_amount: 200, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString() },
   { id: 'frozen-hashbrowns', name: 'Frozen Hashbrowns', current_amount: 1, unit: 'packages', category: 'grains', added_by: 'simon', updated_at: new Date().toISOString() },
 
-  // Vegetables & Fresh (converted to grams where practical, decimal support)
-  { id: 'veg-cabbage', name: 'Whole Cabbage', current_amount: 1000, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString() }, // ~1kg per head
-  { id: 'veg-broccoli', name: 'Broccoli', current_amount: 500, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString() }, // ~500g per head
-  { id: 'veg-mushrooms', name: 'Crimini Mushrooms', current_amount: 225, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString() }, // ~25g per mushroom x9
-  { id: 'veg-roma-tomatoes', name: 'Roma Tomatoes', current_amount: 400, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString() }, // ~100g per tomato x4
-  { id: 'veg-cherry-tomatoes', name: 'Cherry Tomatoes', current_amount: 150, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'veg-carrots', name: 'Carrots', current_amount: 250, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'veg-eggplant', name: 'Eggplant', current_amount: 300, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString() }, // ~300g per eggplant
-  { id: 'veg-jalapeno', name: 'Jalapeño', current_amount: 15, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString() }, // ~15g per jalapeño
-  { id: 'veg-corn-fresh', name: 'Fresh Corn', current_amount: 600, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString() }, // ~100g per ear x6
-  { id: 'veg-onions', name: 'Onions', current_amount: 7, unit: 'items', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString() }, // Keep as items for decimal support
-  { id: 'veg-garlic', name: 'Garlic', current_amount: 30, unit: 'cloves', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString() }, // ~15 cloves per bulb x2
+  // Vegetables & Fresh (converted to grams where practical, decimal support, with minimum buy amounts)
+  { id: 'veg-cabbage', name: 'Whole Cabbage', current_amount: 1000, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 1000 }, // ~1kg per head
+  { id: 'veg-broccoli', name: 'Broccoli', current_amount: 500, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 500 }, // ~500g per head
+  { id: 'veg-mushrooms', name: 'Crimini Mushrooms', current_amount: 225, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 250 }, // 250g package
+  { id: 'veg-roma-tomatoes', name: 'Roma Tomatoes', current_amount: 400, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 500 }, // 500g package
+  { id: 'veg-cherry-tomatoes', name: 'Cherry Tomatoes', current_amount: 150, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 250 }, // 250g container
+  { id: 'veg-carrots', name: 'Carrots', current_amount: 250, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 1000 }, // 1kg bag
+  { id: 'veg-eggplant', name: 'Eggplant', current_amount: 300, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 300 }, // ~300g per eggplant
+  { id: 'veg-jalapeno', name: 'Jalapeño', current_amount: 15, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 50 }, // Small bag ~50g
+  { id: 'veg-corn-fresh', name: 'Fresh Corn', current_amount: 600, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 600 }, // 6-pack ears
+  { id: 'veg-onions', name: 'Onions', current_amount: 7, unit: 'items', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 3 }, // 3lb bag ~3 items
+  { id: 'veg-garlic', name: 'Garlic', current_amount: 30, unit: 'cloves', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 15 }, // 1 bulb ~15 cloves
 
   // Fruits
   { id: 'fruit-peaches', name: 'Peaches', current_amount: 4, unit: 'items', category: 'fruits', added_by: 'simon', updated_at: new Date().toISOString() },

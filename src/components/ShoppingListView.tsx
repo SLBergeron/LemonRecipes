@@ -25,6 +25,7 @@ export function ShoppingListView() {
     toggleItemChecked,
     addCustomItem,
     removeItem,
+    updateItemQuantity,
     getItemsByCategory,
     getUncheckedItems,
     getCheckedItems,
@@ -326,6 +327,7 @@ export function ShoppingListView() {
                         item={item}
                         onToggle={handleToggleItem}
                         onRemove={handleRemoveItem}
+                        onUpdateQuantity={updateItemQuantity}
                       />
                     ))}
                   </div>
@@ -350,9 +352,26 @@ interface ShoppingItemRowProps {
   item: ShoppingItem
   onToggle: (itemId: string) => void
   onRemove: (itemId: string) => void
+  onUpdateQuantity: (itemId: string, newAmount: number) => void
 }
 
-function ShoppingItemRow({ item, onToggle, onRemove }: ShoppingItemRowProps) {
+function ShoppingItemRow({ item, onToggle, onRemove, onUpdateQuantity }: ShoppingItemRowProps) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [editAmount, setEditAmount] = useState(item.amount.toString())
+
+  const handleSave = () => {
+    const newAmount = parseFloat(editAmount)
+    if (!isNaN(newAmount) && newAmount > 0) {
+      onUpdateQuantity(item.id, newAmount)
+    }
+    setIsEditing(false)
+  }
+
+  const handleCancel = () => {
+    setEditAmount(item.amount.toString())
+    setIsEditing(false)
+  }
+
   return (
     <div className={`flex items-center justify-between p-3 border rounded-lg ${
       item.checked ? 'bg-green-50 border-green-200' : ''
@@ -371,7 +390,39 @@ function ShoppingItemRow({ item, onToggle, onRemove }: ShoppingItemRowProps) {
         
         <div className="flex-1 min-w-0">
           <div className={`font-medium ${item.checked ? 'line-through text-muted-foreground' : ''}`}>
-            {item.amount} {item.unit} {item.name}
+            {isEditing ? (
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  value={editAmount}
+                  onChange={(e) => setEditAmount(e.target.value)}
+                  className="w-20 h-8 text-sm"
+                  step="0.1"
+                  min="0"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSave()
+                    if (e.key === 'Escape') handleCancel()
+                  }}
+                  autoFocus
+                />
+                <span>{item.unit} {item.name}</span>
+                <div className="flex gap-1">
+                  <Button size="sm" variant="ghost" onClick={handleSave} className="h-6 w-6 p-0">
+                    <Check className="h-3 w-3 text-green-600" />
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={handleCancel} className="h-6 w-6 p-0">
+                    <Trash2 className="h-3 w-3 text-gray-400" />
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="hover:bg-gray-100 px-1 py-0.5 rounded"
+              >
+                {item.amount} {item.unit} {item.name}
+              </button>
+            )}
           </div>
           <div className="text-sm text-muted-foreground">
             Needed for: {item.needed_for.join(', ')}

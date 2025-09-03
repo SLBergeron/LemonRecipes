@@ -330,10 +330,16 @@ export function generateShoppingListFromPlan(
     }
     
     if (amountToBuy > 0) {
+      // Use minimum buy amount if pantry item has one and we need to buy
+      let finalAmountToBuy = amountToBuy
+      if (pantryItem?.min_buy_amount && finalAmountToBuy < pantryItem.min_buy_amount) {
+        finalAmountToBuy = pantryItem.min_buy_amount
+      }
+      
       shoppingItems.push({
         id: generateId(),
         name: ingredientName,
-        amount: Math.ceil(amountToBuy * 100) / 100, // Round to 2 decimal places for shopping
+        amount: Math.ceil(finalAmountToBuy * 100) / 100, // Round to 2 decimal places for shopping
         unit: needed.unit,
         category: needed.category,
         checked: false,

@@ -229,6 +229,23 @@ export function useShoppingList(
     saveShoppingList(updatedList)
   }, [shoppingList, saveShoppingList])
 
+  // Update item quantity
+  const updateItemQuantity = useCallback(async (itemId: string, newAmount: number) => {
+    if (!shoppingList || newAmount < 0) return
+
+    const updatedItems = shoppingList.items.map(item =>
+      item.id === itemId ? { ...item, amount: newAmount } : item
+    )
+
+    const updatedList: ShoppingList = {
+      ...shoppingList,
+      items: updatedItems
+    }
+
+    setShoppingList(updatedList)
+    saveShoppingList(updatedList)
+  }, [shoppingList, saveShoppingList])
+
   return {
     shoppingList,
     loading,
@@ -236,6 +253,7 @@ export function useShoppingList(
     toggleItemChecked,
     addCustomItem,
     removeItem,
+    updateItemQuantity,
     getItemsByCategory,
     getUncheckedItems,
     getCheckedItems,

@@ -13,6 +13,7 @@ export interface SimplePantryItem {
   category: string
   added_by: UserId
   updated_at: string
+  min_buy_amount?: number // Minimum amount to buy when shopping
 }
 
 export interface PantryCategory {

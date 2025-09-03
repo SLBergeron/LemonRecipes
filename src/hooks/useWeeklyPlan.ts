@@ -17,15 +17,15 @@ export function useWeeklyPlan(
   _pantry: SimplePantryInventory | null
 ) {
   const [currentPlan, setCurrentPlan] = useState<WeeklyPlan | null>(null)
+  const [currentWeek, setCurrentWeek] = useState(getWeekOf())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Load current week's plan
+  // Load weekly plan (triggered when currentWeek changes)
   useEffect(() => {
     const loadWeeklyPlan = async () => {
       try {
         setLoading(true)
-        const currentWeek = getWeekOf()
         
         // Try localStorage first
         const localData = localStorage.getItem(`weekly-plan-${currentWeek}`)
@@ -45,7 +45,6 @@ export function useWeeklyPlan(
         console.error('Failed to load weekly plan:', err)
         setError('Failed to load weekly plan')
         // Fallback to empty plan
-        const currentWeek = getWeekOf()
         const fallbackPlan = createWeeklyPlan(currentWeek)
         setCurrentPlan(fallbackPlan)
       } finally {
@@ -54,7 +53,7 @@ export function useWeeklyPlan(
     }
 
     loadWeeklyPlan()
-  }, [])
+  }, [currentWeek])
 
   // Save plan to localStorage
   const saveWeeklyPlan = useCallback((plan: WeeklyPlan) => {
@@ -195,8 +194,28 @@ export function useWeeklyPlan(
     }
   }, [saveWeeklyPlan])
 
+  // Week navigation functions
+  const goToPreviousWeek = useCallback(() => {
+    const prevWeekDate = new Date(currentWeek)
+    prevWeekDate.setDate(prevWeekDate.getDate() - 7)
+    const prevWeek = getWeekOf(prevWeekDate)
+    setCurrentWeek(prevWeek)
+  }, [currentWeek])
+
+  const goToNextWeek = useCallback(() => {
+    const nextWeekDate = new Date(currentWeek)
+    nextWeekDate.setDate(nextWeekDate.getDate() + 7)
+    const nextWeek = getWeekOf(nextWeekDate)
+    setCurrentWeek(nextWeek)
+  }, [currentWeek])
+
+  const goToCurrentWeek = useCallback(() => {
+    setCurrentWeek(getWeekOf())
+  }, [])
+
   return {
     currentPlan,
+    currentWeek,
     loading,
     error,
     addMealToPlan: addMealToWeeklyPlan,
@@ -205,6 +224,9 @@ export function useWeeklyPlan(
     getMealsForDay,
     getPlanStats,
     createNextWeekPlan,
-    loadWeekPlan
+    loadWeekPlan,
+    goToPreviousWeek,
+    goToNextWeek,
+    goToCurrentWeek
   }
 }
