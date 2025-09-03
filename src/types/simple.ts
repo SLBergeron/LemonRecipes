@@ -157,7 +157,7 @@ export const DEFAULT_CATEGORIES: Omit<PantryCategory, 'items'>[] = [
 // Common units for ingredients
 export const COMMON_UNITS = [
   'items', 'cups', 'tbsp', 'tsp', 'lbs', 'oz', 'g', 'kg', 
-  'ml', 'l', 'cans', 'bottles', 'packages', 'bunches', 'heads'
+  'ml', 'l', 'cans', 'bottles', 'packages', 'bunches', 'heads', 'cloves', 'ears'
 ] as const
 
 export type CommonUnit = typeof COMMON_UNITS[number]

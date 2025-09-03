@@ -123,20 +123,30 @@ export function calculateRecipeAvailability(
   for (const ingredient of recipe.ingredients) {
     if (ingredient.optional) continue
     
-    // Try to find matching pantry item
-    const pantryItem = pantryItems.find(item => 
-      item.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
-      ingredient.name.toLowerCase().includes(item.name.toLowerCase())
-    )
+    // First try to find by pantry_item_id if provided
+    let pantryItem = ingredient.pantry_item_id 
+      ? pantryItems.find(item => item.id === ingredient.pantry_item_id)
+      : null
+    
+    // Fall back to name matching if no pantry_item_id or not found
+    if (!pantryItem) {
+      pantryItem = pantryItems.find(item => 
+        item.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
+        ingredient.name.toLowerCase().includes(item.name.toLowerCase()) ||
+        // Additional fuzzy matching
+        normalizeIngredientName(item.name) === normalizeIngredientName(ingredient.name)
+      )
+    }
     
     if (!pantryItem) {
       missing.push(ingredient.name)
       continue
     }
     
-    // Check if we have enough quantity (simplified check)
-    if (pantryItem.current_amount < ingredient.amount && pantryItem.unit === ingredient.unit) {
-      missing.push(`${ingredient.name} (need ${ingredient.amount} ${ingredient.unit}, have ${pantryItem.current_amount})`)
+    // Check if we have enough quantity with unit matching
+    const hasEnough = checkQuantityAvailability(ingredient, pantryItem)
+    if (!hasEnough) {
+      missing.push(`${ingredient.name} (need ${ingredient.amount} ${ingredient.unit}, have ${pantryItem.current_amount} ${pantryItem.unit})`)
     }
   }
   
@@ -144,6 +154,44 @@ export function calculateRecipeAvailability(
     can_make: missing.length === 0,
     missing_ingredients: missing
   }
+}
+
+function normalizeIngredientName(name: string): string {
+  return name.toLowerCase()
+    .replace(/\b(medium|large|small|whole|fresh|frozen|cooked)\b/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function checkQuantityAvailability(ingredient: any, pantryItem: any): boolean {
+  // If units match exactly, simple comparison
+  if (ingredient.unit === pantryItem.unit) {
+    return pantryItem.current_amount >= ingredient.amount
+  }
+  
+  // Handle common unit conversions
+  const convertedAmount = convertUnits(ingredient.amount, ingredient.unit, pantryItem.unit)
+  if (convertedAmount !== null) {
+    return pantryItem.current_amount >= convertedAmount
+  }
+  
+  // If we can't convert units, assume we have enough (with warning in future)
+  return true
+}
+
+function convertUnits(amount: number, fromUnit: string, toUnit: string): number | null {
+  // Handle ml to ml conversions (already same)
+  if (fromUnit === toUnit) return amount
+  
+  // Handle gram conversions
+  if (fromUnit === 'g' && toUnit === 'g') return amount
+  
+  // Handle item/clove conversions for garlic
+  if (fromUnit === 'cloves' && toUnit === 'cloves') return amount
+  if (fromUnit === 'items' && toUnit === 'items') return amount
+  
+  // Add more conversions as needed
+  return null
 }
 
 export function deductIngredientsFromPantry(
