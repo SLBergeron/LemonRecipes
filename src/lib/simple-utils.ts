@@ -53,16 +53,34 @@ export function updatePantryItemAmount(item: SimplePantryItem, newAmount: number
   }
 }
 
-export function isLowStock(item: SimplePantryItem, threshold: number = 0.25): boolean {
-  // Simple heuristic: if current amount is less than typical minimum
-  // For items measured in whole numbers, consider < 2 as low stock
-  // For percentages or large quantities, use threshold
-  if (item.unit === 'items' || item.unit === 'cans' || item.unit === 'bottles') {
-    return item.current_amount < 2
+export function isLowStock(item: SimplePantryItem): boolean {
+  // More realistic low stock detection based on unit type and reasonable thresholds
+  switch (item.unit) {
+    case 'items':
+    case 'heads':
+    case 'ears':
+    case 'cans':
+    case 'bottles':
+    case 'packages':
+    case 'containers':
+      return item.current_amount <= 1
+    
+    case 'lbs':
+      return item.current_amount <= 1 // 1 pound or less
+    
+    case 'g':
+      return item.current_amount <= 25 // 25g or less for spices/small quantities
+    
+    case 'ml':
+      return item.current_amount <= 50 // 50ml or less for liquids
+    
+    case '%':
+      return item.current_amount <= 10 // 10% or less remaining
+    
+    default:
+      // For other units, use a conservative threshold
+      return item.current_amount <= 2
   }
-  // For other units, consider low stock if less than threshold of a reasonable amount
-  const reasonableAmount = item.unit === 'cups' ? 4 : item.unit === 'lbs' ? 2 : 100
-  return item.current_amount < (reasonableAmount * threshold)
 }
 
 // Recipe utility functions
