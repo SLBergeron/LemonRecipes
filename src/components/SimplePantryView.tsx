@@ -332,15 +332,14 @@ function ItemRow({ item, onUpdateAmount, onUpdateDirectAmount, onUpdateUnit, onU
   const [editUnit, setEditUnit] = useState(item.unit)
   const [editRestock, setEditRestock] = useState((item.normal_restock_level || 0).toString())
 
-  const isLowStock = item.low_stock_threshold 
-    ? item.current_amount <= item.low_stock_threshold
-    : item.unit === 'items' || item.unit === 'cans' || item.unit === 'bottles'
-      ? item.current_amount < 2
-      : item.current_amount < 1
-
   // Calculate stock status for progress bar - fixed calculation
   const restockLevel = item.normal_restock_level || Math.max(item.current_amount * 2, 100)
   const stockPercentage = Math.min((item.current_amount / restockLevel) * 100, 100)
+  
+  // Use consistent logic for both dot and progress bar colors
+  const isLowStock = item.low_stock_threshold 
+    ? item.current_amount <= item.low_stock_threshold
+    : stockPercentage <= 30
 
   const handleSaveAmount = () => {
     const newAmount = parseFloat(editAmount)

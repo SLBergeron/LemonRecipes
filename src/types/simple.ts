@@ -17,6 +17,12 @@ export interface SimplePantryItem {
   normal_restock_level?: number // Target amount when restocking
   restock_unit?: string // Unit for restocking (may differ from current unit)
   low_stock_threshold?: number // Custom low stock threshold
+  seasonal_availability?: {
+    months: number[] // Array of month numbers (1-12) when item is typically available
+    note?: string // Optional note about seasonal availability
+  }
+  auto_add_to_shopping?: boolean // Whether to automatically add to shopping list when low/out
+  preferred_store?: string // Where to buy this item
 }
 
 export interface PantryCategory {
@@ -37,6 +43,7 @@ export interface RecipeIngredient {
   amount: number
   unit: string
   pantry_item_id?: string // Links to pantry item if available
+  recipe_id?: string // Links to another recipe (for sauces/sub-recipes)
   optional?: boolean
 }
 

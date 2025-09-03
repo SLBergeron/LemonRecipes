@@ -262,6 +262,81 @@ export function addMealToPlan(
   }
 }
 
+// Check if an item is currently in season
+export function isInSeason(item: SimplePantryItem, currentMonth: number = new Date().getMonth() + 1): boolean {
+  if (!item.seasonal_availability) return true
+  return item.seasonal_availability.months.includes(currentMonth)
+}
+
+// Get items that should auto-add to shopping when low
+export function getAutoShoppingItems(pantry: SimplePantryInventory): SimplePantryItem[] {
+  return pantry.categories
+    .flatMap(cat => cat.items)
+    .filter(item => item.auto_add_to_shopping && isLowStock(item))
+}
+
+// Enhanced shopping list generation with auto-shopping for missing ingredients
+export function generateShoppingListFromRecipe(
+  recipe: SimpleRecipe,
+  pantry: SimplePantryInventory,
+  servings: number = recipe.servings
+): ShoppingItem[] {
+  const scaleFactor = servings / recipe.servings
+  const shoppingItems: ShoppingItem[] = []
+  
+  for (const ingredient of recipe.ingredients) {
+    const scaledAmount = ingredient.amount * scaleFactor
+    
+    // Try to find matching pantry item
+    let pantryItem: SimplePantryItem | undefined
+    if (ingredient.pantry_item_id) {
+      pantryItem = pantry.categories
+        .flatMap(cat => cat.items)
+        .find(item => item.id === ingredient.pantry_item_id)
+    } else {
+      // Fuzzy match by name
+      pantryItem = pantry.categories
+        .flatMap(cat => cat.items)
+        .find(item => 
+          item.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
+          ingredient.name.toLowerCase().includes(item.name.toLowerCase())
+        )
+    }
+    
+    let needToBuy = false
+    let amountToBuy = scaledAmount
+    
+    if (pantryItem) {
+      // Check if we have enough in pantry
+      const available = pantryItem.current_amount
+      if (available < scaledAmount) {
+        needToBuy = true
+        const shortage = scaledAmount - available
+        // Buy at least the minimum buy amount or the shortage, whichever is greater
+        amountToBuy = Math.max(shortage, pantryItem.min_buy_amount || shortage)
+      }
+    } else {
+      // Item not in pantry, need to buy
+      needToBuy = true
+    }
+    
+    if (needToBuy) {
+      shoppingItems.push({
+        id: generateId(),
+        name: ingredient.name,
+        amount: amountToBuy,
+        unit: ingredient.unit,
+        category: pantryItem?.category || categorizeIngredient(ingredient.name),
+        checked: false,
+        needed_for: [recipe.title],
+        pantry_item_id: pantryItem?.id
+      })
+    }
+  }
+  
+  return shoppingItems
+}
+
 export function generateShoppingListFromPlan(
   plan: WeeklyPlan,
   recipes: SimpleRecipe[],
@@ -271,7 +346,8 @@ export function generateShoppingListFromPlan(
     amount: number,
     unit: string,
     category: string,
-    recipes: string[]
+    recipes: string[],
+    pantryItemId?: string
   }>()
   
   // Collect all ingredients from planned meals
@@ -294,7 +370,8 @@ export function generateShoppingListFromPlan(
           amount: scaledAmount,
           unit: ingredient.unit,
           category: categorizeIngredient(ingredient.name),
-          recipes: [recipe.title]
+          recipes: [recipe.title],
+          pantryItemId: ingredient.pantry_item_id
         })
       }
     }
@@ -348,33 +425,29 @@ export function generateShoppingListFromPlan(
       })
     }
   }
-  
-  // Add low stock items from pantry
-  for (const category of pantry.categories) {
-    for (const item of category.items) {
-      if (isLowStock(item)) {
-        // Check if not already in shopping list
-        const alreadyAdded = shoppingItems.find(si => 
-          si.name.toLowerCase() === item.name.toLowerCase()
-        )
-        
-        if (!alreadyAdded) {
-          shoppingItems.push({
-            id: generateId(),
-            name: item.name,
-            amount: getRecommendedRestockAmount(item),
-            unit: item.unit,
-            category: item.category,
-            checked: false,
-            needed_for: ['Low Stock Restock'],
-            pantry_item_id: item.id
-          })
-        }
-      }
+
+  // Add auto-shopping items for low stock pantry items
+  const autoShoppingItems = getAutoShoppingItems(pantry).map(item => ({
+    id: generateId(),
+    name: item.name,
+    amount: item.normal_restock_level || item.min_buy_amount || item.current_amount * 2,
+    unit: item.unit,
+    category: item.category,
+    checked: false,
+    needed_for: ['Low Stock Auto-Restock'],
+    pantry_item_id: item.id
+  }))
+
+  // Merge with existing shopping items, avoiding duplicates
+  const allItems = [...shoppingItems]
+  for (const autoItem of autoShoppingItems) {
+    const existing = allItems.find(item => item.pantry_item_id === autoItem.pantry_item_id)
+    if (!existing) {
+      allItems.push(autoItem)
     }
   }
-  
-  return shoppingItems.sort((a, b) => a.category.localeCompare(b.category))
+
+  return allItems.sort((a, b) => a.category.localeCompare(b.category))
 }
 
 function categorizeIngredient(ingredientName: string): string {
@@ -418,7 +491,7 @@ function categorizeIngredient(ingredientName: string): string {
   return 'pantry'
 }
 
-function getRecommendedRestockAmount(item: SimplePantryItem): number {
+export function getRecommendedRestockAmount(item: SimplePantryItem): number {
   // Simple restock recommendations based on unit type
   switch (item.unit) {
     case 'items':

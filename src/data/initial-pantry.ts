@@ -34,13 +34,15 @@ export const initialPantryData: SimplePantryItem[] = [
   { id: 'veg-onions', name: 'Onions', current_amount: 7, unit: 'items', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 3, normal_restock_level: 10, low_stock_threshold: 2 },
   { id: 'veg-garlic', name: 'Garlic', current_amount: 30, unit: 'cloves', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 15, normal_restock_level: 45, low_stock_threshold: 10 },
 
-  // Fruits
-  { id: 'fruit-peaches', name: 'Peaches', current_amount: 4, unit: 'items', category: 'fruits', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'fruit-kiwis', name: 'Kiwis', current_amount: 3, unit: 'items', category: 'fruits', added_by: 'simon', updated_at: new Date().toISOString() },
+  // Fruits (with seasonal availability)
+  { id: 'fruit-peaches', name: 'Peaches', current_amount: 4, unit: 'items', category: 'fruits', added_by: 'simon', updated_at: new Date().toISOString(), seasonal_availability: { months: [6, 7, 8, 9], note: 'Peak season summer months' }, auto_add_to_shopping: false },
+  { id: 'fruit-kiwis', name: 'Kiwis', current_amount: 3, unit: 'items', category: 'fruits', added_by: 'simon', updated_at: new Date().toISOString(), seasonal_availability: { months: [1, 2, 3, 10, 11, 12], note: 'Best in winter/early spring' } },
 
-  // Dairy & Cheese (with restock levels)
-  { id: 'dairy-butter', name: 'Butter', current_amount: 500, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 454, normal_restock_level: 900, low_stock_threshold: 200 }, // 1lb stick
-  { id: 'dairy-milk', name: 'Milk', current_amount: 500, unit: 'ml', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 1000, normal_restock_level: 2000, low_stock_threshold: 250 }, // 1L carton
+  // Dairy & Cheese (with restock levels and auto-shopping)
+  { id: 'dairy-butter', name: 'Butter', current_amount: 500, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 454, normal_restock_level: 900, low_stock_threshold: 200, auto_add_to_shopping: true }, // 1lb stick
+  { id: 'dairy-milk', name: 'Milk', current_amount: 500, unit: 'ml', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 1000, normal_restock_level: 2000, low_stock_threshold: 250, auto_add_to_shopping: true }, // 1L carton
+  { id: 'dairy-greek-yogurt', name: 'Greek Yogurt', current_amount: 750, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 500, normal_restock_level: 1000, low_stock_threshold: 200, auto_add_to_shopping: true },
+  { id: 'dairy-plain-yogurt', name: 'Plain Yogurt', current_amount: 500, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 500, normal_restock_level: 1000, low_stock_threshold: 150, auto_add_to_shopping: true },
   { id: 'dairy-goat-cheese', name: 'Pure Goat Cheese', current_amount: 50, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 113, normal_restock_level: 225, low_stock_threshold: 50 }, // Low stock
   { id: 'dairy-gorgonzola', name: 'Gorgonzola', current_amount: 100, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 113, normal_restock_level: 225, low_stock_threshold: 40 },
 
@@ -57,8 +59,8 @@ export const initialPantryData: SimplePantryItem[] = [
   { id: 'spice-garlic-grit', name: 'Garlic Grit', current_amount: 65, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString() },
   { id: 'spice-voodoo-pork', name: 'Voodoo Crutch (Pork)', current_amount: 50, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString() },
   { id: 'spice-voodoo-chicken', name: 'Voodoo Crutch (Chicken)', current_amount: 50, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'spice-mustard-seeds', name: 'Yellow Mustard Seeds', current_amount: 15, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'spice-allspice', name: 'Whole Allspice', current_amount: 8, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString() },
+  { id: 'spice-mustard-seeds', name: 'Yellow Mustard Seeds', current_amount: 15, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 25, normal_restock_level: 50, low_stock_threshold: 20 },
+  { id: 'spice-allspice', name: 'Whole Allspice', current_amount: 8, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 15, normal_restock_level: 30, low_stock_threshold: 12 }, // Low stock
   { id: 'spice-four-prawns', name: 'Four Prawns Four Spices', current_amount: 80, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString() },
   { id: 'spice-sugar', name: 'White Sugar', current_amount: 1500, unit: 'g', category: 'pantry', added_by: 'simon', updated_at: new Date().toISOString() },
 
@@ -93,5 +95,53 @@ export const initialPantryData: SimplePantryItem[] = [
   { id: 'pasta-rigatoni', name: 'Rigatoni', current_amount: 200, unit: 'g', category: 'grains', added_by: 'simon', updated_at: new Date().toISOString() },
 
   // Baking & Misc
-  { id: 'baking-yeast', name: 'Active Dry Yeast', current_amount: 100, unit: 'g', category: 'pantry', added_by: 'simon', updated_at: new Date().toISOString() }
+  { id: 'baking-yeast', name: 'Active Dry Yeast', current_amount: 100, unit: 'g', category: 'pantry', added_by: 'simon', updated_at: new Date().toISOString() },
+
+  // Snacks & European Specialties
+  { id: 'snack-fuet', name: 'Fuet (Spanish Dry Sausage)', current_amount: 150, unit: 'g', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 100, normal_restock_level: 200, low_stock_threshold: 50 },
+  { id: 'snack-crackers', name: 'European Crackers', current_amount: 200, unit: 'g', category: 'grains', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 200, normal_restock_level: 400, low_stock_threshold: 100 },
+  { id: 'snack-manchego', name: 'Manchego Cheese', current_amount: 150, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 100, normal_restock_level: 200, low_stock_threshold: 50 },
+  { id: 'snack-marcona-almonds', name: 'Marcona Almonds', current_amount: 100, unit: 'g', category: 'pantry', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 100, normal_restock_level: 200, low_stock_threshold: 30 },
+  { id: 'snack-cornichons', name: 'French Cornichons', current_amount: 250, unit: 'g', category: 'pantry', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 200, normal_restock_level: 400, low_stock_threshold: 50 },
+
+  // Beverages & Teas
+  { id: 'beverage-earl-grey', name: 'Earl Grey Tea', current_amount: 25, unit: 'bags', category: 'pantry', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 20, normal_restock_level: 40, low_stock_threshold: 10 },
+  { id: 'beverage-green-tea', name: 'Green Tea', current_amount: 30, unit: 'bags', category: 'pantry', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 20, normal_restock_level: 40, low_stock_threshold: 10 },
+  { id: 'beverage-chamomile', name: 'Chamomile Tea', current_amount: 20, unit: 'bags', category: 'pantry', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 20, normal_restock_level: 40, low_stock_threshold: 8 },
+  { id: 'beverage-jasmine-tea', name: 'Jasmine Tea', current_amount: 15, unit: 'bags', category: 'pantry', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 20, normal_restock_level: 40, low_stock_threshold: 8 },
+  { id: 'beverage-coffee-beans', name: 'Coffee Beans', current_amount: 500, unit: 'g', category: 'pantry', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 250, normal_restock_level: 500, low_stock_threshold: 100 },
+
+  // French Cuisine Staples
+  { id: 'french-brie', name: 'Brie Cheese', current_amount: 200, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 125, normal_restock_level: 250, low_stock_threshold: 60 },
+  { id: 'french-butter-unsalted', name: 'French Unsalted Butter', current_amount: 250, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 225, normal_restock_level: 450, low_stock_threshold: 100 },
+  { id: 'french-shallots', name: 'French Shallots', current_amount: 150, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 100, normal_restock_level: 200, low_stock_threshold: 50 },
+  { id: 'french-wine-white', name: 'Dry White Wine (Cooking)', current_amount: 500, unit: 'ml', category: 'oils', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 375, normal_restock_level: 750, low_stock_threshold: 200 },
+  { id: 'french-wine-red', name: 'Red Wine (Cooking)', current_amount: 400, unit: 'ml', category: 'oils', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 375, normal_restock_level: 750, low_stock_threshold: 150 },
+  { id: 'french-herbs-provence', name: 'Herbes de Provence', current_amount: 30, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 25, normal_restock_level: 50, low_stock_threshold: 10 },
+  { id: 'french-cream-heavy', name: 'Heavy Cream (35%)', current_amount: 250, unit: 'ml', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 250, normal_restock_level: 500, low_stock_threshold: 100 },
+  { id: 'french-cognac', name: 'Cognac (Cooking)', current_amount: 200, unit: 'ml', category: 'oils', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 200, normal_restock_level: 400, low_stock_threshold: 50 },
+
+  // Asian Cuisine Staples
+  { id: 'asian-soy-sauce', name: 'Soy Sauce', current_amount: 300, unit: 'ml', category: 'oils', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 250, normal_restock_level: 500, low_stock_threshold: 100 },
+  { id: 'asian-sesame-oil', name: 'Sesame Oil', current_amount: 150, unit: 'ml', category: 'oils', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 150, normal_restock_level: 300, low_stock_threshold: 50 },
+  { id: 'asian-fish-sauce', name: 'Fish Sauce', current_amount: 200, unit: 'ml', category: 'oils', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 200, normal_restock_level: 400, low_stock_threshold: 50 },
+  { id: 'asian-oyster-sauce', name: 'Oyster Sauce', current_amount: 250, unit: 'ml', category: 'oils', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 200, normal_restock_level: 400, low_stock_threshold: 75 },
+  { id: 'asian-coconut-milk', name: 'Coconut Milk (Canned)', current_amount: 400, unit: 'ml', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 400, normal_restock_level: 800, low_stock_threshold: 200 },
+  { id: 'asian-ginger-fresh', name: 'Fresh Ginger', current_amount: 100, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 75, normal_restock_level: 150, low_stock_threshold: 25 },
+  { id: 'asian-lemongrass', name: 'Fresh Lemongrass', current_amount: 50, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 50, normal_restock_level: 100, low_stock_threshold: 15 },
+  { id: 'asian-lime-leaves', name: 'Kaffir Lime Leaves', current_amount: 10, unit: 'leaves', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 10, normal_restock_level: 20, low_stock_threshold: 3 },
+  { id: 'asian-thai-chilies', name: 'Thai Bird Chilies', current_amount: 20, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 25, normal_restock_level: 50, low_stock_threshold: 10 },
+  { id: 'asian-star-anise', name: 'Star Anise', current_amount: 15, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 15, normal_restock_level: 30, low_stock_threshold: 5 },
+  { id: 'asian-five-spice', name: 'Chinese Five Spice', current_amount: 25, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 25, normal_restock_level: 50, low_stock_threshold: 8 },
+  { id: 'asian-wasabi-paste', name: 'Wasabi Paste', current_amount: 75, unit: 'g', category: 'oils', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 50, normal_restock_level: 100, low_stock_threshold: 20 },
+
+  // International Pantry Staples
+  { id: 'international-harissa', name: 'Harissa Paste', current_amount: 100, unit: 'g', category: 'oils', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 100, normal_restock_level: 200, low_stock_threshold: 30 },
+  { id: 'international-sumac', name: 'Sumac', current_amount: 40, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 30, normal_restock_level: 60, low_stock_threshold: 15 },
+  { id: 'international-za-atar', name: 'Za\'atar', current_amount: 50, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 40, normal_restock_level: 80, low_stock_threshold: 15 },
+  { id: 'international-pomegranate-molasses', name: 'Pomegranate Molasses', current_amount: 150, unit: 'ml', category: 'oils', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 150, normal_restock_level: 300, low_stock_threshold: 50 },
+  { id: 'international-preserved-lemons', name: 'Preserved Lemons', current_amount: 200, unit: 'g', category: 'pantry', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 200, normal_restock_level: 400, low_stock_threshold: 75 },
+  { id: 'international-miso-paste', name: 'White Miso Paste', current_amount: 250, unit: 'g', category: 'pantry', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 200, normal_restock_level: 400, low_stock_threshold: 75 },
+  { id: 'international-chipotle-adobo', name: 'Chipotle Peppers in Adobo', current_amount: 200, unit: 'g', category: 'pantry', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 200, normal_restock_level: 400, low_stock_threshold: 50 },
+  { id: 'international-anchovies', name: 'Anchovies (Canned)', current_amount: 60, unit: 'g', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 50, normal_restock_level: 100, low_stock_threshold: 20 }
 ]
