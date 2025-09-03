@@ -249,9 +249,9 @@ export function SimplePantryView() {
       {/* Items List */}
       <div className="space-y-4">
         {pantry.categories.map(category => {
-          const categoryItems = selectedCategory 
-            ? (selectedCategory === category.id ? category.items : [])
-            : category.items
+          const categoryItems = selectedCategory === 'all' 
+            ? category.items
+            : (selectedCategory === category.id ? category.items : [])
 
           if (categoryItems.length === 0) return null
 
