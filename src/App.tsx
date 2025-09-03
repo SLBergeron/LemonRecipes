@@ -1,15 +1,18 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { ShoppingCart, Calendar, Users, Clock } from "lucide-react"
+import { ShoppingCart, Calendar, Users, Clock, Package } from "lucide-react"
 import { MealCard } from "@/components/meal-plan/MealCard"
 import { BatchSauceCard } from "@/components/meal-plan/BatchSauceCard"
 import { GroceryList } from "@/components/grocery/GroceryList"
+import { PantryInventory } from "@/components/pantry/PantryInventory"
 import { getCurrentMealPlan, formatCurrency, getBudgetProgress } from "@/lib/data"
+import { usePantryInventory } from "@/hooks/usePantryInventory"
 import './App.css'
 
 function App() {
-  const [activeView, setActiveView] = useState<'meal-plan' | 'grocery-list' | 'timeline'>('meal-plan')
+  const [activeView, setActiveView] = useState<'meal-plan' | 'grocery-list' | 'timeline' | 'pantry'>('meal-plan')
   const mealPlan = getCurrentMealPlan()
+  const { pantry, updateItemAmount } = usePantryInventory()
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -59,6 +62,15 @@ function App() {
               <Clock className="h-4 w-4" />
               <span className="hidden sm:inline">Timeline</span>
               <span className="sm:hidden">Time</span>
+            </Button>
+            <Button 
+              variant={activeView === 'pantry' ? 'secondary' : 'outline'} 
+              className="gap-2"
+              onClick={() => setActiveView('pantry')}
+            >
+              <Package className="h-4 w-4" />
+              <span className="hidden sm:inline">Pantry</span>
+              <span className="sm:hidden">Stock</span>
             </Button>
             <Button variant="ghost" className="gap-2">
               <Users className="h-4 w-4" />
@@ -159,6 +171,13 @@ function App() {
               ))}
             </div>
           </div>
+        )}
+
+        {activeView === 'pantry' && pantry && (
+          <PantryInventory 
+            pantry={pantry} 
+            onUpdateAmount={updateItemAmount}
+          />
         )}
       </main>
     </div>

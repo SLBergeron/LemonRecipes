@@ -1,41 +1,29 @@
-import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { CheckCircle, Circle, Copy, Trash2 } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { CheckCircle, Circle, Copy, Trash2, Wifi, WifiOff, Sync, Package } from "lucide-react"
 import type { GroceryCategory, GroceryItem } from "@/types"
 import { cn } from "@/lib/utils"
 import { formatCurrency } from "@/lib/data"
+import { useSharedGroceryList } from "@/hooks/useSharedGroceryList"
+import { usePantryInventory } from "@/hooks/usePantryInventory"
 
 interface GroceryListProps {
   categories: GroceryCategory[]
 }
 
 export function GroceryList({ categories }: GroceryListProps) {
-  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
-
-  // Load checked items from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem("grocery-checked-items")
-    if (saved) {
-      setCheckedItems(JSON.parse(saved))
-    }
-  }, [])
-
-  // Save to localStorage whenever checked items change
-  useEffect(() => {
-    localStorage.setItem("grocery-checked-items", JSON.stringify(checkedItems))
-  }, [checkedItems])
-
-  const toggleItem = (itemId: string) => {
-    setCheckedItems(prev => ({
-      ...prev,
-      [itemId]: !prev[itemId]
-    }))
-  }
-
-  const clearAllChecks = () => {
-    setCheckedItems({})
-  }
+  const { 
+    checkedItems, 
+    toggleItem, 
+    uncheckAll, 
+    getProgress, 
+    lastSync, 
+    isOnline, 
+    syncWithServer 
+  } = useSharedGroceryList()
+  
+  const { isItemAvailable } = usePantryInventory()
 
   const copyGroceryList = () => {
     const listText = categories
@@ -59,33 +47,55 @@ export function GroceryList({ categories }: GroceryListProps) {
     )
   }
 
-  const getCheckedCount = () => {
-    const totalItems = categories.reduce((total, category) => total + category.items.length, 0)
-    const checkedCount = Object.values(checkedItems).filter(Boolean).length
-    return { checked: checkedCount, total: totalItems }
+  const getTotalItems = () => {
+    return categories.reduce((total, category) => total + category.items.length, 0)
   }
 
-  const { checked, total } = getCheckedCount()
+  const total = getTotalItems()
+  const progress = getProgress(total)
 
   return (
     <div className="space-y-6">
       {/* Header with actions */}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold">🛒 Grocery List</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-semibold">🛒 Grocery List</h2>
+            {isOnline ? (
+              <Badge variant="secondary" className="text-xs">
+                <Wifi className="w-3 h-3 mr-1" />
+                Synced
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="text-xs">
+                <WifiOff className="w-3 h-3 mr-1" />
+                Offline
+              </Badge>
+            )}
+          </div>
           <p className="text-sm text-muted-foreground">
-            {checked} of {total} items checked • Total: {formatCurrency(getTotalCost())}
+            {Math.round((progress / 100) * total)} of {total} items checked • Total: {formatCurrency(getTotalCost())}
           </p>
+          {lastSync && (
+            <p className="text-xs text-muted-foreground">
+              Last sync: {lastSync.toLocaleTimeString()}
+            </p>
+          )}
         </div>
         
         <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={syncWithServer} disabled={!isOnline}>
+            <Sync className="h-4 w-4" />
+            Sync
+          </Button>
+          
           <Button variant="outline" size="sm" onClick={copyGroceryList}>
             <Copy className="h-4 w-4" />
             Copy List
           </Button>
           
-          {checked > 0 && (
-            <Button variant="secondary" size="sm" onClick={clearAllChecks}>
+          {progress > 0 && (
+            <Button variant="secondary" size="sm" onClick={uncheckAll}>
               <Trash2 className="h-4 w-4" />
               Clear All
             </Button>
@@ -98,7 +108,7 @@ export function GroceryList({ categories }: GroceryListProps) {
         <div className="w-full bg-secondary rounded-full h-2">
           <div 
             className="bg-lemon h-2 rounded-full transition-all duration-300" 
-            style={{ width: `${(checked / total) * 100}%` }}
+            style={{ width: `${progress}%` }}
           />
         </div>
       )}
@@ -111,6 +121,7 @@ export function GroceryList({ categories }: GroceryListProps) {
             category={category}
             checkedItems={checkedItems}
             onToggleItem={toggleItem}
+            isItemAvailable={isItemAvailable}
           />
         ))}
       </div>
@@ -122,9 +133,10 @@ interface GroceryCategoryCardProps {
   category: GroceryCategory
   checkedItems: Record<string, boolean>
   onToggleItem: (itemId: string) => void
+  isItemAvailable: (itemId: string) => boolean
 }
 
-function GroceryCategoryCard({ category, checkedItems, onToggleItem }: GroceryCategoryCardProps) {
+function GroceryCategoryCard({ category, checkedItems, onToggleItem, isItemAvailable }: GroceryCategoryCardProps) {
   const getBorderColor = (color: string) => {
     switch (color) {
       case "#dc3545": return "border-l-red-500"
@@ -150,6 +162,7 @@ function GroceryCategoryCard({ category, checkedItems, onToggleItem }: GroceryCa
             item={item}
             checked={checkedItems[item.id] || false}
             onToggle={() => onToggleItem(item.id)}
+            isPantryItem={isItemAvailable(item.id)}
           />
         ))}
       </CardContent>
@@ -161,9 +174,10 @@ interface GroceryItemRowProps {
   item: GroceryItem
   checked: boolean
   onToggle: () => void
+  isPantryItem: boolean
 }
 
-function GroceryItemRow({ item, checked, onToggle }: GroceryItemRowProps) {
+function GroceryItemRow({ item, checked, onToggle, isPantryItem }: GroceryItemRowProps) {
   return (
     <div
       className={cn(
@@ -184,9 +198,20 @@ function GroceryItemRow({ item, checked, onToggle }: GroceryItemRowProps) {
       
       <div className={cn("flex-1 min-w-0", checked && "line-through")}>
         <div className="flex items-center justify-between">
-          <span className="font-medium text-sm">{item.name}</span>
-          <span className="text-sm font-medium text-muted-foreground">
-            {formatCurrency(item.price)}
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-sm">{item.name}</span>
+            {isPantryItem && (
+              <Badge variant="secondary" className="text-xs">
+                <Package className="w-3 h-3 mr-1" />
+                In Stock
+              </Badge>
+            )}
+          </div>
+          <span className={cn(
+            "text-sm font-medium text-muted-foreground",
+            isPantryItem && "line-through opacity-50"
+          )}>
+            {isPantryItem ? "Free" : formatCurrency(item.price)}
           </span>
         </div>
         

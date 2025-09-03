@@ -1,0 +1,81 @@
+{
+  "last_updated": "2025-09-03",
+  "categories": [
+    {
+      "id": "oils-vinegars",
+      "title": "🫒 Oils & Vinegars",
+      "emoji": "🫒",
+      "color": "#28a745",
+      "items": [
+        { "id": "olive-oil", "name": "Extra virgin olive oil", "current_amount": "500ml", "unit": "ml", "total_capacity": "750ml", "expires": "2026-03-15", "price_per_unit": 12.99 },
+        { "id": "sesame-oil", "name": "Sesame oil", "current_amount": "150ml", "unit": "ml", "total_capacity": "250ml", "expires": "2025-12-01", "price_per_unit": 5.99 },
+        { "id": "red-wine-vinegar", "name": "Red wine vinegar", "current_amount": "300ml", "unit": "ml", "total_capacity": "500ml", "expires": "2026-08-01", "price_per_unit": 4.49 },
+        { "id": "rice-vinegar", "name": "Rice vinegar", "current_amount": "400ml", "unit": "ml", "total_capacity": "500ml", "expires": "2026-02-01", "price_per_unit": 3.49 }
+      ]
+    },
+    {
+      "id": "sauces-condiments", 
+      "title": "🧂 Sauces & Condiments",
+      "emoji": "🧂",
+      "color": "#007bff",
+      "items": [
+        { "id": "tahini", "name": "Tahini", "current_amount": "80%", "unit": "%", "total_capacity": "454g jar", "expires": "2025-11-30", "price_per_unit": 6.99 },
+        { "id": "harissa-paste", "name": "Harissa paste", "current_amount": "60%", "unit": "%", "total_capacity": "170g tube", "expires": "2025-10-15", "price_per_unit": 4.99 },
+        { "id": "miso-paste", "name": "White miso paste", "current_amount": "75%", "unit": "%", "total_capacity": "300g container", "expires": "2026-01-20", "price_per_unit": 5.99 },
+        { "id": "soy-sauce", "name": "Soy sauce", "current_amount": "200ml", "unit": "ml", "total_capacity": "500ml", "expires": "2026-06-01", "price_per_unit": 4.99 },
+        { "id": "fish-sauce", "name": "Fish sauce", "current_amount": "150ml", "unit": "ml", "total_capacity": "200ml", "expires": "2026-04-01", "price_per_unit": 3.99 }
+      ]
+    },
+    {
+      "id": "spices-dried",
+      "title": "🌿 Spices & Dried Herbs",
+      "emoji": "🌿", 
+      "color": "#ffc107",
+      "items": [
+        { "id": "cumin-ground", "name": "Ground cumin", "current_amount": "30g", "unit": "g", "total_capacity": "50g", "expires": "2025-12-01", "price_per_unit": 2.99 },
+        { "id": "coriander-seeds", "name": "Coriander seeds", "current_amount": "25g", "unit": "g", "total_capacity": "40g", "expires": "2026-01-01", "price_per_unit": 2.49 },
+        { "id": "paprika-smoked", "name": "Smoked paprika", "current_amount": "40g", "unit": "g", "total_capacity": "60g", "expires": "2025-11-01", "price_per_unit": 3.99 },
+        { "id": "bay-leaves", "name": "Bay leaves", "current_amount": "15 leaves", "unit": "leaves", "total_capacity": "20 leaves", "expires": "2026-03-01", "price_per_unit": 2.99 },
+        { "id": "oregano-dried", "name": "Dried oregano", "current_amount": "20g", "unit": "g", "total_capacity": "30g", "expires": "2025-10-15", "price_per_unit": 2.49 }
+      ]
+    },
+    {
+      "id": "grains-legumes",
+      "title": "🌾 Grains & Legumes (Bulk)",
+      "emoji": "🌾",
+      "color": "#f7c52d",
+      "items": [
+        { "id": "basmati-rice-bulk", "name": "Basmati rice", "current_amount": "2000g", "unit": "g", "total_capacity": "5000g bulk", "expires": "2026-09-01", "price_per_unit": 12.99 },
+        { "id": "arborio-rice", "name": "Arborio rice", "current_amount": "800g", "unit": "g", "total_capacity": "1000g", "expires": "2026-08-15", "price_per_unit": 4.99 },
+        { "id": "quinoa", "name": "Quinoa", "current_amount": "500g", "unit": "g", "total_capacity": "750g", "expires": "2026-07-01", "price_per_unit": 7.99 },
+        { "id": "green-lentils", "name": "Green lentils", "current_amount": "400g", "unit": "g", "total_capacity": "500g", "expires": "2026-10-01", "price_per_unit": 3.99 },
+        { "id": "chickpeas-dried", "name": "Dried chickpeas", "current_amount": "300g", "unit": "g", "total_capacity": "500g", "expires": "2026-12-01", "price_per_unit": 2.99 }
+      ]
+    },
+    {
+      "id": "canned-jarred",
+      "title": "🥫 Canned & Jarred",
+      "emoji": "🥫",
+      "color": "#dc3545",
+      "items": [
+        { "id": "crushed-tomatoes", "name": "Crushed tomatoes", "current_amount": "3 cans", "unit": "cans", "total_capacity": "4 cans", "expires": "2026-05-01", "price_per_unit": 1.99 },
+        { "id": "coconut-milk", "name": "Coconut milk", "current_amount": "2 cans", "unit": "cans", "total_capacity": "3 cans", "expires": "2026-04-15", "price_per_unit": 2.49 },
+        { "id": "chicken-stock", "name": "Chicken stock", "current_amount": "1L", "unit": "L", "total_capacity": "2L", "expires": "2025-12-15", "price_per_unit": 3.99 },
+        { "id": "capers", "name": "Capers", "current_amount": "50g", "unit": "g", "total_capacity": "100g jar", "expires": "2026-02-01", "price_per_unit": 3.49 }
+      ]
+    },
+    {
+      "id": "baking-basics",
+      "title": "🧁 Baking & Basics",
+      "emoji": "🧁",
+      "color": "#e83e8c",
+      "items": [
+        { "id": "flour-ap", "name": "All-purpose flour", "current_amount": "1500g", "unit": "g", "total_capacity": "2500g", "expires": "2026-01-01", "price_per_unit": 4.99 },
+        { "id": "sugar-white", "name": "White sugar", "current_amount": "800g", "unit": "g", "total_capacity": "1000g", "expires": "2027-01-01", "price_per_unit": 3.99 },
+        { "id": "brown-sugar", "name": "Brown sugar", "current_amount": "400g", "unit": "g", "total_capacity": "500g", "expires": "2026-08-01", "price_per_unit": 4.49 },
+        { "id": "honey", "name": "Honey", "current_amount": "300g", "unit": "g", "total_capacity": "500g", "expires": "2027-06-01", "price_per_unit": 8.99 },
+        { "id": "vanilla-extract", "name": "Vanilla extract", "current_amount": "80ml", "unit": "ml", "total_capacity": "100ml", "expires": "2026-12-01", "price_per_unit": 6.99 }
+      ]
+    }
+  ]
+}
