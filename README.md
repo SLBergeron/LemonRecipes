@@ -1,69 +1,110 @@
-# React + TypeScript + Vite
+# 🍋 LemonRecipes - React SPA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Modern React implementation of LemonRecipes meal planning app with shadcn/ui components and mobile-first design.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **🎨 Modern Design**: shadcn/ui components with Apple-inspired aesthetics
+- **📱 Mobile-First**: Touch-friendly grocery shopping with real-time checking
+- **⚡ Fast Performance**: Vite + React + TypeScript for optimal speed
+- **📦 Zero Maintenance**: Static deployment to GitHub Pages
+- **🛒 Smart Grocery Lists**: Local storage persistence, copy to clipboard
+- **📋 Interactive Meal Plans**: Expandable recipe cards, batch sauce tracking
+- **⏰ Timeline Management**: Task tracking for meal prep workflow
+- **🍎 Apple Integration**: JSON API for Shortcuts integration
 
-## Expanding the ESLint configuration
+## 🚀 Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Install dependencies
+npm install
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# Start development server
+npm run dev
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+# Build for production
+npm run build
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Preview production build
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📱 Mobile Features
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Touch Targets**: All interactive elements 44px+ for easy tapping
+- **Swipe Navigation**: Smooth transitions between sections
+- **Real-time Syncing**: Grocery list state persisted locally
+- **Responsive Design**: Optimized layouts from 320px to desktop
+- **Progressive Enhancement**: Works offline with cached data
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🏗️ Architecture
+
 ```
+src/
+├── components/
+│   ├── ui/          # shadcn/ui base components
+│   ├── meal-plan/   # Meal plan specific components
+│   └── grocery/     # Grocery shopping components
+├── data/            # Static JSON meal plan data
+├── lib/             # Utilities and data helpers
+└── types/           # TypeScript type definitions
+```
+
+## 🎯 Design Principles
+
+- **Personal Tool**: Built specifically for Simon & Léa's workflow
+- **Minimal Maintenance**: Static build, no servers to manage
+- **Mobile-Optimized**: Primary use case is grocery shopping on mobile
+- **Apple Ecosystem**: Native integration with Shortcuts app
+
+## 🚢 Deployment
+
+Automatically deployed to GitHub Pages via GitHub Actions on every push to `main`.
+
+**Live URL**: `https://slbergeron.github.io/LemonRecipes/`
+
+## 🍎 Apple Shortcuts Integration
+
+Access current week data via: `/api/current-week.json`
+
+```json
+{
+  "week_id": "2025-09-03-flavor-forward",
+  "active_items": [...],
+  "budget_target": 165,
+  "estimated_cost": 162,
+  "theme": "Week of Sept 3-10 — Flavor-Forward Meal Prep Week"
+}
+```
+
+## 📊 Tech Stack
+
+- **Framework**: React 19 + TypeScript
+- **UI Components**: shadcn/ui + Radix UI primitives  
+- **Styling**: Tailwind CSS with CSS custom properties
+- **Icons**: Lucide React
+- **Build Tool**: Vite
+- **Deployment**: GitHub Actions → GitHub Pages
+- **State Management**: React useState + localStorage
+
+## 🔧 Development
+
+The app uses modern React patterns with TypeScript for type safety. All components are built with accessibility in mind using Radix UI primitives.
+
+### Key Components
+
+- `MealCard`: Expandable meal plan cards with day letters
+- `BatchSauceCard`: Recipe cards with colored themes
+- `GroceryList`: Interactive shopping list with progress tracking
+- `GroceryItemRow`: Touch-optimized list items with checking
+
+### Data Flow
+
+1. Static JSON meal plan data imported at build time
+2. React components render from typed interfaces
+3. User interactions stored in localStorage
+4. Apple Shortcuts fetch data from public API endpoint
+
+---
+
+Built with ❤️ for personal use. Migrated from Jekyll to modern React for better mobile experience and zero maintenance overhead.
