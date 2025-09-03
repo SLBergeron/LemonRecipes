@@ -300,30 +300,40 @@ export function generateShoppingListFromPlan(
     }
   }
   
-  // Create shopping items, checking against pantry
+  // Create shopping items, checking against pantry using improved matching
   const shoppingItems: ShoppingItem[] = []
   const pantryItems = pantry.categories.flatMap(cat => cat.items)
   
   for (const [ingredientKey, needed] of neededIngredients) {
     const ingredientName = ingredientKey.split('-')[0]
     
-    // Check if we have enough in pantry
-    const pantryItem = pantryItems.find(item =>
+    // Use improved pantry matching logic (same as recipe availability)
+    const pantryItem = pantryItems.find(item => 
       item.name.toLowerCase().includes(ingredientName.toLowerCase()) ||
-      ingredientName.toLowerCase().includes(item.name.toLowerCase())
+      ingredientName.toLowerCase().includes(item.name.toLowerCase()) ||
+      normalizeIngredientName(item.name) === normalizeIngredientName(ingredientName)
     )
     
     let amountToBuy = needed.amount
     
-    if (pantryItem && pantryItem.unit === needed.unit) {
-      amountToBuy = Math.max(0, needed.amount - pantryItem.current_amount)
+    if (pantryItem) {
+      // Use unit conversion if available
+      const convertedAmount = convertUnits(needed.amount, needed.unit, pantryItem.unit)
+      if (convertedAmount !== null) {
+        amountToBuy = Math.max(0, convertedAmount - pantryItem.current_amount)
+        // Convert back to recipe unit for shopping list
+        const shoppingAmount = convertUnits(amountToBuy, pantryItem.unit, needed.unit)
+        amountToBuy = shoppingAmount !== null ? shoppingAmount : amountToBuy
+      } else if (pantryItem.unit === needed.unit) {
+        amountToBuy = Math.max(0, needed.amount - pantryItem.current_amount)
+      }
     }
     
     if (amountToBuy > 0) {
       shoppingItems.push({
         id: generateId(),
         name: ingredientName,
-        amount: Math.ceil(amountToBuy), // Round up for shopping
+        amount: Math.ceil(amountToBuy * 100) / 100, // Round to 2 decimal places for shopping
         unit: needed.unit,
         category: needed.category,
         checked: false,

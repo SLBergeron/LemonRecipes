@@ -135,5 +135,27 @@ export const sampleRecipes: SimpleRecipe[] = [
     tags: ['pasta', 'bacon', 'comfort-food'],
     created_by: 'simon',
     created_at: new Date().toISOString()
+  },
+  {
+    id: 'recipe-test-missing-ingredients',
+    title: 'Test Recipe with Missing Ingredients',
+    servings: 2,
+    prep_time: 5,
+    cook_time: 10,
+    ingredients: [
+      { name: 'Ground Beef', amount: 200, unit: 'g', pantry_item_id: 'meat-ground-beef' }, // We have this
+      { name: 'Bell Pepper', amount: 1, unit: 'items' }, // We DON'T have this - should appear in shopping list
+      { name: 'Cheddar Cheese', amount: 100, unit: 'g' }, // We DON'T have this - should appear in shopping list
+      { name: 'Onions', amount: 0.5, unit: 'items', pantry_item_id: 'veg-onions' } // We have this, test decimal
+    ],
+    instructions: [
+      'Test recipe to verify shopping list generation for missing ingredients',
+      'Brown the ground beef with diced onions',
+      'Add bell pepper and cook until tender',
+      'Top with cheese and serve'
+    ],
+    tags: ['test', 'quick'],
+    created_by: 'simon',
+    created_at: new Date().toISOString()
   }
 ]
