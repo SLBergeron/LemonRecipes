@@ -5,9 +5,7 @@ import type {
   SimplePantryInventory 
 } from '@/types/simple'
 import { 
-  createRecipe, 
-  generateId, 
-  getCurrentUser,
+  createRecipe,
   calculateRecipeAvailability 
 } from '@/lib/simple-utils'
 import { sampleRecipes } from '@/data/sample-recipes'
@@ -32,23 +30,53 @@ export function useSimpleRecipes(pantry: SimplePantryInventory | null) {
           return
         }
 
-        // Try to load existing recipe data
+        // Load individual recipe JSON files
         try {
-          const response = await fetch('./data/recipes.json')
-          if (response.ok) {
-            const existingData = await response.json()
-            const convertedRecipes = convertExistingRecipeData(existingData)
+          console.log('Loading individual recipe JSON files...')
+          
+          // First, get the recipe index
+          const indexResponse = await fetch('./data/recipes/index.json')
+          if (!indexResponse.ok) {
+            throw new Error('Recipe index not found')
+          }
+          
+          const recipeIndex = await indexResponse.json()
+          console.log(`Found ${recipeIndex.total_count} recipes to load`)
+          
+          // Load each individual recipe file
+          const loadedRecipes: SimpleRecipe[] = []
+          
+          for (const filename of recipeIndex.recipes) {
+            try {
+              const recipeResponse = await fetch(`./data/recipes/${filename}`)
+              if (recipeResponse.ok) {
+                const recipe: SimpleRecipe = await recipeResponse.json()
+                loadedRecipes.push(recipe)
+              } else {
+                console.warn(`Failed to load recipe: ${filename}`)
+              }
+            } catch (err) {
+              console.warn(`Error loading recipe ${filename}:`, err)
+            }
+          }
+          
+          console.log(`Successfully loaded ${loadedRecipes.length} recipes`)
+          
+          if (loadedRecipes.length > 0) {
             const collection: RecipeCollection = {
-              recipes: convertedRecipes,
+              recipes: loadedRecipes,
               last_updated: new Date().toISOString()
             }
-            setRecipes(convertedRecipes)
+            setRecipes(loadedRecipes)
             saveRecipesToStorage(collection)
           } else {
-            throw new Error('No existing recipes')
+            throw new Error('No recipes loaded')
           }
-        } catch {
-          // Initialize with sample recipes
+          
+        } catch (err) {
+          console.warn('Failed to load individual recipe files, falling back to sample recipes:', err)
+          
+          // Fall back to sample recipes
           const collection: RecipeCollection = {
             recipes: sampleRecipes,
             last_updated: new Date().toISOString()
@@ -185,32 +213,6 @@ export function useSimpleRecipes(pantry: SimplePantryInventory | null) {
     }
   }, [recipes])
 
-  // Convert existing recipe data to new format
-  const convertExistingRecipeData = (existingData: any): SimpleRecipe[] => {
-    if (!existingData?.recipes) return []
-    
-    return existingData.recipes.map((recipe: any) => ({
-      id: recipe.id || generateId(),
-      title: recipe.title || recipe.name || 'Untitled Recipe',
-      servings: recipe.servings || 4,
-      prep_time: recipe.prep_time || recipe.prepTime || 0,
-      cook_time: recipe.cook_time || recipe.cookTime || 0,
-      ingredients: (recipe.ingredients || []).map((ing: any) => ({
-        name: ing.name || ing.ingredient || '',
-        amount: parseFloat(ing.amount) || 1,
-        unit: ing.unit || 'items',
-        optional: ing.optional || false
-      })),
-      instructions: Array.isArray(recipe.instructions) 
-        ? recipe.instructions.filter(Boolean)
-        : recipe.instructions ? [recipe.instructions] : [],
-      tags: recipe.tags || [],
-      created_by: getCurrentUser(),
-      created_at: recipe.created_at || new Date().toISOString(),
-      can_make: false,
-      missing_ingredients: []
-    }))
-  }
 
   return {
     recipes,
