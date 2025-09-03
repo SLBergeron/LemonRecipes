@@ -3,9 +3,14 @@
     "recipe-fuet-manchego-plate.json",
     "recipe-brie-cognac-sauce.json", 
     "recipe-simple-yogurt-berry-bowl.json",
-    "recipe-simple-harissa-marinade.json"
+    "recipe-simple-harissa-marinade.json",
+    "recipe-ground-beef-kimchi-stir-fry.json",
+    "recipe-ras-el-hanout-roasted-cauliflower.json",
+    "recipe-bacon-mushroom-rigatoni.json",
+    "recipe-pork-leek-dumpling-soup.json",
+    "recipe-tofu-gochujang-stir-fry.json"
   ],
-  "last_updated": "2025-09-03T19:47:00.000Z",
-  "total_count": 4,
+  "last_updated": "2025-09-03T20:30:00.000Z",
+  "total_count": 9,
   "description": "Individual JSON recipe files for the LemonRecipes application"
 }

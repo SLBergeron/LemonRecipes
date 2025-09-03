@@ -1,0 +1,64 @@
+{
+  "id": "recipe-pork-leek-dumpling-soup",
+  "title": "Pan-Fried Pork & Leek Dumplings",
+  "servings": 3,
+  "prep_time": 5,
+  "cook_time": 12,
+  "ingredients": [
+    {
+      "name": "Pork & Leek Dumplings",
+      "amount": 500,
+      "unit": "g",
+      "pantry_item_id": "frozen-dumplings"
+    },
+    {
+      "name": "Canola Oil",
+      "amount": 30,
+      "unit": "ml",
+      "pantry_item_id": "pantry-canola-oil"
+    },
+    {
+      "name": "Soy Sauce",
+      "amount": 40,
+      "unit": "ml",
+      "pantry_item_id": "asian-soy-sauce"
+    },
+    {
+      "name": "Rice Vinegar",
+      "amount": 20,
+      "unit": "ml",
+      "pantry_item_id": "pantry-rice-vinegar"
+    },
+    {
+      "name": "Sesame Oil",
+      "amount": 10,
+      "unit": "ml",
+      "pantry_item_id": "asian-sesame-oil"
+    },
+    {
+      "name": "Fresh Ginger",
+      "amount": 10,
+      "unit": "g",
+      "pantry_item_id": "asian-ginger-fresh"
+    },
+    {
+      "name": "Garlic",
+      "amount": 2,
+      "unit": "cloves",
+      "pantry_item_id": "veg-garlic"
+    }
+  ],
+  "instructions": [
+    "Heat canola oil in large non-stick skillet over medium-high heat",
+    "Add frozen dumplings in single layer (don't thaw first)",
+    "Cook 3-4 minutes until bottoms are golden brown",
+    "Add 1/3 cup water to pan, cover immediately and steam 6-8 minutes",
+    "Meanwhile, make dipping sauce: combine soy sauce, rice vinegar, sesame oil",
+    "Add minced ginger and garlic to dipping sauce",
+    "Remove lid and cook 1-2 minutes more to crisp bottoms",
+    "Serve hot with dipping sauce on the side"
+  ],
+  "tags": ["chinese", "dumplings", "pan-fried", "frozen", "quick"],
+  "created_by": "simon",
+  "created_at": "2025-09-03T20:30:00.000Z"
+}

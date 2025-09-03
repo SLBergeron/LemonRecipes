@@ -21,14 +21,8 @@ export function useSimpleRecipes(pantry: SimplePantryInventory | null) {
       try {
         setLoading(true)
         
-        // Try localStorage first
-        const localData = localStorage.getItem('simple-recipes')
-        if (localData) {
-          const parsed: RecipeCollection = JSON.parse(localData)
-          setRecipes(parsed.recipes)
-          setLoading(false)
-          return
-        }
+        // Clear localStorage to always load fresh from JSON files
+        localStorage.removeItem('simple-recipes')
 
         // Load individual recipe JSON files
         try {
