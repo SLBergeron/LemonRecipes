@@ -1,9 +1,7 @@
 import type { PantryInventory, PantryCategory, PantryItem } from '@/types/pantry'
-import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
-import { Plus, Minus, AlertTriangle, CheckCircle } from 'lucide-react'
+import { Plus, Minus, AlertTriangle } from 'lucide-react'
 
 interface PantryInventoryProps {
   pantry: PantryInventory
@@ -63,29 +61,35 @@ function PantryItemCard({ item, onUpdateAmount }: PantryItemCardProps) {
             </div>
             
             <div className="flex flex-col items-end space-y-1">
-              <Badge 
-                variant={level === 'low' ? 'destructive' : level === 'medium' ? 'default' : 'secondary'}
-                className="text-xs"
-              >
+              <span className={`text-xs px-2 py-1 rounded ${
+                level === 'low' ? 'bg-red-100 text-red-800' :
+                level === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-green-100 text-green-800'
+              }`}>
                 {percentage}%
-              </Badge>
+              </span>
               
               {expirationStatus !== 'fresh' && (
-                <Badge 
-                  variant={expirationStatus === 'expired' ? 'destructive' : 'outline'}
-                  className="text-xs"
-                >
+                <span className={`text-xs px-2 py-1 rounded flex items-center ${
+                  expirationStatus === 'expired' ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800'
+                }`}>
                   <AlertTriangle className="w-3 h-3 mr-1" />
                   {expirationStatus === 'expired' ? 'Expired' : `${daysLeft}d left`}
-                </Badge>
+                </span>
               )}
             </div>
           </div>
           
-          <Progress 
-            value={percentage} 
-            className="h-2"
-          />
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div 
+              className={`h-2 rounded-full transition-all duration-300 ${
+                level === 'low' ? 'bg-red-500' :
+                level === 'medium' ? 'bg-yellow-500' :
+                'bg-green-500'
+              }`}
+              style={{ width: `${percentage}%` }}
+            />
+          </div>
           
           <div className="flex items-center justify-between">
             <p className="text-xs text-muted-foreground">
@@ -139,9 +143,9 @@ function PantryCategoryCard({ category, onUpdateAmount }: PantryCategoryProps) {
         <CardTitle className="flex items-center space-x-2 text-base">
           <span className="text-lg">{category.emoji}</span>
           <span>{category.title}</span>
-          <Badge variant="secondary" className="text-xs">
+          <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full">
             {category.items.length}
-          </Badge>
+          </span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -202,9 +206,9 @@ export function PantryInventory({ pantry, onUpdateAmount }: PantryInventoryProps
             </div>
             <div className="flex flex-wrap gap-2">
               {lowStockItems.map(item => (
-                <Badge key={item.id} variant="outline" className="text-orange-700 border-orange-300">
+                <span key={item.id} className="text-xs px-2 py-1 bg-orange-200 text-orange-800 rounded-full border border-orange-300">
                   {item.name}
-                </Badge>
+                </span>
               ))}
             </div>
           </CardContent>

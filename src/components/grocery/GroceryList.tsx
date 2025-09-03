@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { CheckCircle, Circle, Copy, Trash2, Wifi, WifiOff, Sync, Package } from "lucide-react"
+import { CheckCircle, Circle, Copy, Trash2, Wifi, WifiOff, RotateCw, Package } from "lucide-react"
 import type { GroceryCategory, GroceryItem } from "@/types"
 import { cn } from "@/lib/utils"
 import { formatCurrency } from "@/lib/data"
@@ -61,17 +60,19 @@ export function GroceryList({ categories }: GroceryListProps) {
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold">🛒 Grocery List</h2>
-            {isOnline ? (
-              <Badge variant="secondary" className="text-xs">
-                <Wifi className="w-3 h-3 mr-1" />
-                Synced
-              </Badge>
-            ) : (
-              <Badge variant="outline" className="text-xs">
-                <WifiOff className="w-3 h-3 mr-1" />
-                Offline
-              </Badge>
-            )}
+            <div className={`text-xs px-2 py-1 rounded-full ${isOnline ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}>
+              {isOnline ? (
+                <span className="flex items-center gap-1">
+                  <Wifi className="w-3 h-3" />
+                  Synced
+                </span>
+              ) : (
+                <span className="flex items-center gap-1">
+                  <WifiOff className="w-3 h-3" />
+                  Offline
+                </span>
+              )}
+            </div>
           </div>
           <p className="text-sm text-muted-foreground">
             {Math.round((progress / 100) * total)} of {total} items checked • Total: {formatCurrency(getTotalCost())}
@@ -85,7 +86,7 @@ export function GroceryList({ categories }: GroceryListProps) {
         
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={syncWithServer} disabled={!isOnline}>
-            <Sync className="h-4 w-4" />
+            <RotateCw className="h-4 w-4" />
             Sync
           </Button>
           
@@ -201,10 +202,10 @@ function GroceryItemRow({ item, checked, onToggle, isPantryItem }: GroceryItemRo
           <div className="flex items-center gap-2">
             <span className="font-medium text-sm">{item.name}</span>
             {isPantryItem && (
-              <Badge variant="secondary" className="text-xs">
-                <Package className="w-3 h-3 mr-1" />
+              <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
+                <Package className="w-3 h-3 inline mr-1" />
                 In Stock
-              </Badge>
+              </span>
             )}
           </div>
           <span className={cn(

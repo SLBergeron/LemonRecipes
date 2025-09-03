@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 
 const STORAGE_KEY = 'shared-grocery-checklist'
-const SYNC_ENDPOINT = '/api/grocery-sync' // For future server sync
 
 export function useSharedGroceryList() {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
