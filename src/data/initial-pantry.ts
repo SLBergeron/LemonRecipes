@@ -21,33 +21,33 @@ export const initialPantryData: SimplePantryItem[] = [
   { id: 'frozen-edamame', name: 'Frozen Edamame', current_amount: 200, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString() },
   { id: 'frozen-hashbrowns', name: 'Frozen Hashbrowns', current_amount: 1, unit: 'packages', category: 'grains', added_by: 'simon', updated_at: new Date().toISOString() },
 
-  // Vegetables & Fresh (converted to grams where practical, decimal support, with minimum buy amounts)
-  { id: 'veg-cabbage', name: 'Whole Cabbage', current_amount: 1000, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 1000 }, // ~1kg per head
-  { id: 'veg-broccoli', name: 'Broccoli', current_amount: 500, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 500 }, // ~500g per head
-  { id: 'veg-mushrooms', name: 'Crimini Mushrooms', current_amount: 225, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 250 }, // 250g package
-  { id: 'veg-roma-tomatoes', name: 'Roma Tomatoes', current_amount: 400, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 500 }, // 500g package
-  { id: 'veg-cherry-tomatoes', name: 'Cherry Tomatoes', current_amount: 150, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 250 }, // 250g container
-  { id: 'veg-carrots', name: 'Carrots', current_amount: 250, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 1000 }, // 1kg bag
-  { id: 'veg-eggplant', name: 'Eggplant', current_amount: 300, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 300 }, // ~300g per eggplant
-  { id: 'veg-jalapeno', name: 'Jalapeño', current_amount: 15, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 50 }, // Small bag ~50g
-  { id: 'veg-corn-fresh', name: 'Fresh Corn', current_amount: 600, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 600 }, // 6-pack ears
-  { id: 'veg-onions', name: 'Onions', current_amount: 7, unit: 'items', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 3 }, // 3lb bag ~3 items
-  { id: 'veg-garlic', name: 'Garlic', current_amount: 30, unit: 'cloves', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 15 }, // 1 bulb ~15 cloves
+  // Vegetables & Fresh (with restock levels and low stock thresholds)
+  { id: 'veg-cabbage', name: 'Whole Cabbage', current_amount: 1000, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 1000, normal_restock_level: 1500, low_stock_threshold: 500 },
+  { id: 'veg-broccoli', name: 'Broccoli', current_amount: 500, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 500, normal_restock_level: 1000, low_stock_threshold: 200 },
+  { id: 'veg-mushrooms', name: 'Crimini Mushrooms', current_amount: 225, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 250, normal_restock_level: 500, low_stock_threshold: 100 },
+  { id: 'veg-roma-tomatoes', name: 'Roma Tomatoes', current_amount: 100, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 500, normal_restock_level: 800, low_stock_threshold: 200 }, // Low stock example
+  { id: 'veg-cherry-tomatoes', name: 'Cherry Tomatoes', current_amount: 150, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 250, normal_restock_level: 400, low_stock_threshold: 100 },
+  { id: 'veg-carrots', name: 'Carrots', current_amount: 250, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 1000, normal_restock_level: 2000, low_stock_threshold: 500 },
+  { id: 'veg-eggplant', name: 'Eggplant', current_amount: 300, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 300, normal_restock_level: 600, low_stock_threshold: 150 },
+  { id: 'veg-jalapeno', name: 'Jalapeño', current_amount: 15, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 50, normal_restock_level: 80, low_stock_threshold: 20 }, // Low stock example
+  { id: 'veg-corn-fresh', name: 'Fresh Corn', current_amount: 600, unit: 'g', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 600, normal_restock_level: 1200, low_stock_threshold: 300 },
+  { id: 'veg-onions', name: 'Onions', current_amount: 7, unit: 'items', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 3, normal_restock_level: 10, low_stock_threshold: 2 },
+  { id: 'veg-garlic', name: 'Garlic', current_amount: 30, unit: 'cloves', category: 'vegetables', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 15, normal_restock_level: 45, low_stock_threshold: 10 },
 
   // Fruits
   { id: 'fruit-peaches', name: 'Peaches', current_amount: 4, unit: 'items', category: 'fruits', added_by: 'simon', updated_at: new Date().toISOString() },
   { id: 'fruit-kiwis', name: 'Kiwis', current_amount: 3, unit: 'items', category: 'fruits', added_by: 'simon', updated_at: new Date().toISOString() },
 
-  // Dairy & Cheese
-  { id: 'dairy-butter', name: 'Butter', current_amount: 500, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'dairy-milk', name: 'Milk', current_amount: 500, unit: 'ml', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'dairy-goat-cheese', name: 'Pure Goat Cheese', current_amount: 150, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'dairy-gorgonzola', name: 'Gorgonzola', current_amount: 100, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString() },
+  // Dairy & Cheese (with restock levels)
+  { id: 'dairy-butter', name: 'Butter', current_amount: 500, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 454, normal_restock_level: 900, low_stock_threshold: 200 }, // 1lb stick
+  { id: 'dairy-milk', name: 'Milk', current_amount: 500, unit: 'ml', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 1000, normal_restock_level: 2000, low_stock_threshold: 250 }, // 1L carton
+  { id: 'dairy-goat-cheese', name: 'Pure Goat Cheese', current_amount: 50, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 113, normal_restock_level: 225, low_stock_threshold: 50 }, // Low stock
+  { id: 'dairy-gorgonzola', name: 'Gorgonzola', current_amount: 100, unit: 'g', category: 'dairy', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 113, normal_restock_level: 225, low_stock_threshold: 40 },
 
-  // Spices & Seasonings
-  { id: 'spice-ras-el-hanout', name: 'Ras El Hanout', current_amount: 85, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'spice-tex-mex', name: 'Frontera Tex-Mex Seasoning', current_amount: 120, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'spice-garlic-salt', name: 'Deluxe Garlic Salt', current_amount: 150, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString() },
+  // Spices & Seasonings (with restock levels)
+  { id: 'spice-ras-el-hanout', name: 'Ras El Hanout', current_amount: 85, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 80, normal_restock_level: 160, low_stock_threshold: 20 },
+  { id: 'spice-tex-mex', name: 'Frontera Tex-Mex Seasoning', current_amount: 15, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 65, normal_restock_level: 130, low_stock_threshold: 25 }, // Low stock example
+  { id: 'spice-garlic-salt', name: 'Deluxe Garlic Salt', current_amount: 150, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString(), min_buy_amount: 80, normal_restock_level: 160, low_stock_threshold: 30 },
   { id: 'spice-roasting-blend', name: 'Rustic Roasting Blend', current_amount: 95, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString() },
   { id: 'spice-tarragon-shallot', name: 'Tarragon-Shallot Blend', current_amount: 75, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString() },
   { id: 'spice-marrakesh-salmon', name: 'Marrakesh Salmon Seasoning', current_amount: 110, unit: 'g', category: 'spices', added_by: 'simon', updated_at: new Date().toISOString() },

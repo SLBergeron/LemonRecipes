@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Minus, Trash2, Package, AlertTriangle } from "lucide-react"
+import { Plus, Minus, Trash2, Package, AlertTriangle, Check, X } from "lucide-react"
 import { useSimplePantry } from '@/hooks/useSimplePantry'
 import { DEFAULT_CATEGORIES, COMMON_UNITS } from '@/types/simple'
 import type { SimplePantryItem } from '@/types/simple'
@@ -17,6 +17,7 @@ export function SimplePantryView() {
     error, 
     addItem, 
     updateItemAmount, 
+    updateItemUnit,
     deleteItem, 
     getItemsByCategory, 
     getLowStockItems, 
@@ -89,6 +90,14 @@ export function SimplePantryView() {
       await updateItemAmount(itemId, newAmount)
     } catch (err) {
       console.error('Failed to update amount:', err)
+    }
+  }
+
+  const handleUpdateUnit = async (itemId: string, newUnit: string) => {
+    try {
+      await updateItemUnit(itemId, newUnit)
+    } catch (err) {
+      console.error('Failed to update unit:', err)
     }
   }
 
@@ -281,6 +290,7 @@ export function SimplePantryView() {
                       item={item}
                       onUpdateAmount={handleUpdateAmount}
                       onUpdateDirectAmount={handleDirectUpdateAmount}
+                      onUpdateUnit={handleUpdateUnit}
                       onDelete={handleDeleteItem}
                     />
                   ))}
@@ -310,104 +320,195 @@ interface ItemRowProps {
   item: SimplePantryItem
   onUpdateAmount: (itemId: string, currentAmount: number, delta: number) => void
   onUpdateDirectAmount: (itemId: string, newAmount: number) => void
+  onUpdateUnit: (itemId: string, newUnit: string) => void
   onDelete: (itemId: string) => void
 }
 
-function ItemRow({ item, onUpdateAmount, onUpdateDirectAmount, onDelete }: ItemRowProps) {
-  const [isEditing, setIsEditing] = useState(false)
+function ItemRow({ item, onUpdateAmount, onUpdateDirectAmount, onUpdateUnit, onDelete }: ItemRowProps) {
+  const [isEditingAmount, setIsEditingAmount] = useState(false)
+  const [isEditingUnit, setIsEditingUnit] = useState(false)
   const [editAmount, setEditAmount] = useState(item.current_amount.toString())
+  const [editUnit, setEditUnit] = useState(item.unit)
 
-  const isLowStock = item.unit === 'items' || item.unit === 'cans' || item.unit === 'bottles'
-    ? item.current_amount < 2
-    : item.current_amount < 1
+  const isLowStock = item.low_stock_threshold 
+    ? item.current_amount <= item.low_stock_threshold
+    : item.unit === 'items' || item.unit === 'cans' || item.unit === 'bottles'
+      ? item.current_amount < 2
+      : item.current_amount < 1
 
-  const handleSave = () => {
+  // Calculate stock status for progress bar
+  const restockLevel = item.normal_restock_level || (item.current_amount * 2)
+  const stockPercentage = Math.min((item.current_amount / restockLevel) * 100, 100)
+
+  const handleSaveAmount = () => {
     const newAmount = parseFloat(editAmount)
     if (!isNaN(newAmount) && newAmount >= 0) {
       onUpdateDirectAmount(item.id, newAmount)
     }
-    setIsEditing(false)
+    setIsEditingAmount(false)
   }
 
-  const handleCancel = () => {
+  const handleCancelAmount = () => {
     setEditAmount(item.current_amount.toString())
-    setIsEditing(false)
+    setIsEditingAmount(false)
+  }
+
+  const handleSaveUnit = () => {
+    if (editUnit !== item.unit) {
+      onUpdateUnit(item.id, editUnit)
+    }
+    setIsEditingUnit(false)
+  }
+
+  const handleCancelUnit = () => {
+    setEditUnit(item.unit)
+    setIsEditingUnit(false)
   }
 
   return (
-    <div className="flex items-center justify-between p-3 border rounded-lg">
-      <div className="flex-1">
-        <div className="flex items-center gap-2">
-          <span className="font-medium">{item.name}</span>
-          {isLowStock && (
-            <Badge variant="destructive" className="text-xs">
-              Low Stock
-            </Badge>
-          )}
+    <div className="p-3 sm:p-4 border rounded-lg space-y-3 sm:space-y-2">
+      {/* Header Row - Name and Status */}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <h4 className="font-medium text-base truncate">{item.name}</h4>
+          <div className="flex items-center gap-2 mt-1">
+            {isLowStock && (
+              <Badge variant="destructive" className="text-xs px-1 py-0">
+                Low Stock
+              </Badge>
+            )}
+            {item.normal_restock_level && (
+              <Badge variant="outline" className="text-xs px-1 py-0">
+                Target: {item.normal_restock_level} {item.unit}
+              </Badge>
+            )}
+          </div>
         </div>
-        <div className="text-sm text-muted-foreground">
-          Added by {item.added_by}
-        </div>
-      </div>
-      
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onUpdateAmount(item.id, item.current_amount, -1)}
-          disabled={item.current_amount <= 0 || isEditing}
-        >
-          <Minus className="h-3 w-3" />
-        </Button>
-        
-        <div className="min-w-24 text-center">
-          {isEditing ? (
-            <div className="flex items-center gap-1">
-              <Input
-                type="number"
-                value={editAmount}
-                onChange={(e) => setEditAmount(e.target.value)}
-                className="w-16 h-8 text-sm text-center"
-                step="0.1"
-                min="0"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSave()
-                  if (e.key === 'Escape') handleCancel()
-                }}
-                autoFocus
-                onBlur={handleSave}
-              />
-              <span className="text-xs text-muted-foreground">{item.unit}</span>
-            </div>
-          ) : (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="font-mono hover:bg-gray-100 px-2 py-1 rounded transition-colors"
-              title="Click to edit quantity"
-            >
-              {item.current_amount} {item.unit}
-            </button>
-          )}
-        </div>
-        
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onUpdateAmount(item.id, item.current_amount, 1)}
-          disabled={isEditing}
-        >
-          <Plus className="h-3 w-3" />
-        </Button>
         
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onDelete(item.id)}
-          className="text-destructive hover:text-destructive"
-          disabled={isEditing}
+          className="text-destructive hover:text-destructive flex-shrink-0"
         >
           <Trash2 className="h-4 w-4" />
         </Button>
+      </div>
+
+      {/* Stock Progress Bar */}
+      <div className="space-y-1">
+        <div className="flex justify-between text-xs text-muted-foreground">
+          <span>Current Stock</span>
+          <span>{Math.round(stockPercentage)}%</span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div 
+            className={`h-2 rounded-full transition-all ${
+              stockPercentage > 60 ? 'bg-green-500' : 
+              stockPercentage > 30 ? 'bg-yellow-500' : 
+              'bg-red-500'
+            }`}
+            style={{ width: `${stockPercentage}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Amount and Unit Controls */}
+      <div className="flex items-center justify-between gap-2">
+        {/* Decrease Button */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onUpdateAmount(item.id, item.current_amount, -1)}
+          disabled={item.current_amount <= 0 || isEditingAmount}
+          className="flex-shrink-0"
+        >
+          <Minus className="h-3 w-3" />
+        </Button>
+
+        {/* Amount Display/Edit */}
+        <div className="flex-1 flex items-center justify-center gap-2">
+          {isEditingAmount ? (
+            <div className="flex items-center gap-1">
+              <Input
+                type="number"
+                value={editAmount}
+                onChange={(e) => setEditAmount(e.target.value)}
+                className="w-20 h-8 text-sm text-center"
+                step="0.1"
+                min="0"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSaveAmount()
+                  if (e.key === 'Escape') handleCancelAmount()
+                }}
+                autoFocus
+                onBlur={handleSaveAmount}
+              />
+              <Button size="sm" variant="ghost" onClick={handleSaveAmount} className="h-6 w-6 p-0">
+                <Check className="h-3 w-3 text-green-600" />
+              </Button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsEditingAmount(true)}
+              className="font-mono text-lg hover:bg-gray-100 px-3 py-2 rounded transition-colors"
+              title="Click to edit amount"
+            >
+              {item.current_amount}
+            </button>
+          )}
+          
+          {/* Unit Display/Edit */}
+          {isEditingUnit ? (
+            <div className="flex items-center gap-1">
+              <Select value={editUnit} onValueChange={setEditUnit}>
+                <SelectTrigger className="w-20 h-8 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {COMMON_UNITS.map(unit => (
+                    <SelectItem key={unit} value={unit}>
+                      {unit}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button size="sm" variant="ghost" onClick={handleSaveUnit} className="h-6 w-6 p-0">
+                <Check className="h-3 w-3 text-green-600" />
+              </Button>
+              <Button size="sm" variant="ghost" onClick={handleCancelUnit} className="h-6 w-6 p-0">
+                <X className="h-3 w-3 text-red-600" />
+              </Button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsEditingUnit(true)}
+              className="text-sm text-muted-foreground hover:bg-gray-100 px-2 py-1 rounded transition-colors"
+              title="Click to change unit"
+            >
+              {item.unit}
+            </button>
+          )}
+        </div>
+
+        {/* Increase Button */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onUpdateAmount(item.id, item.current_amount, 1)}
+          disabled={isEditingAmount}
+          className="flex-shrink-0"
+        >
+          <Plus className="h-3 w-3" />
+        </Button>
+      </div>
+
+      {/* Additional Info */}
+      <div className="text-xs text-muted-foreground flex justify-between items-center">
+        <span>Added by {item.added_by}</span>
+        {item.min_buy_amount && (
+          <span>Min buy: {item.min_buy_amount} {item.unit}</span>
+        )}
       </div>
     </div>
   )
