@@ -1,0 +1,255 @@
+{
+  "id": "2025-01-13-international-fusion",
+  "title": "Week of Jan 13-19 — International Fusion Week",
+  "date": "2025-01-13",
+  "season": "winter",
+  "farmers_market_available": false,
+  "budget_target": 145,
+  "estimated_cost": 165,
+  "pantry_savings": 85,
+  "net_shopping_cost": 165,
+  "prep_time_total": "3.5 hours",
+  "shopping_locations": ["grocery_store", "specialty_shop"],
+  "tags": ["international", "fusion", "yogurt-based", "tea-smoking", "charcuterie"],
+  "meal_prep_friendly": true,
+  "leftover_integration": true,
+  "author": "Simon & Léa",
+  "active_ingredients": [
+    "dairy-greek-yogurt",
+    "snack-fuet", 
+    "snack-manchego",
+    "french-brie",
+    "asian-coconut-milk",
+    "beverage-earl-grey",
+    "international-harissa",
+    "international-za-atar"
+  ],
+  "strategy": [
+    {
+      "emoji": "🌍",
+      "title": "International Flavors",
+      "description": "Explore Spanish, French, Asian, and Middle Eastern cuisines with authentic ingredients",
+      "color": "#28a745"
+    },
+    {
+      "emoji": "🥛",
+      "title": "Yogurt Power",
+      "description": "Greek yogurt as the star in marinades, sauces, and breakfast applications",
+      "color": "#fad02e"
+    },
+    {
+      "emoji": "🧀",
+      "title": "Charcuterie Focus",
+      "description": "Elevate snacking and light meals with European specialties",
+      "color": "#17a2b8"
+    }
+  ],
+  "featured_recipes": [
+    {
+      "id": "recipe-fuet-manchego-plate",
+      "title": "Spanish Charcuterie Plate",
+      "cuisine": "Spanish",
+      "key_ingredients": ["fuet", "manchego", "marcona almonds"]
+    },
+    {
+      "id": "recipe-brie-cognac-sauce", 
+      "title": "Creamy Brie and Cognac Sauce",
+      "cuisine": "French",
+      "key_ingredients": ["brie", "cognac", "heavy cream"]
+    },
+    {
+      "id": "recipe-coconut-ginger-chicken",
+      "title": "Thai-Style Coconut Ginger Chicken", 
+      "cuisine": "Thai",
+      "key_ingredients": ["coconut milk", "ginger", "lemongrass"]
+    },
+    {
+      "id": "recipe-yogurt-harissa-lamb",
+      "title": "Greek Yogurt Harissa Marinated Beef",
+      "cuisine": "Middle Eastern Fusion", 
+      "key_ingredients": ["greek yogurt", "harissa", "za'atar"]
+    },
+    {
+      "id": "recipe-earl-grey-pork",
+      "title": "Earl Grey Tea-Smoked Pork Roast",
+      "cuisine": "Fusion",
+      "key_ingredients": ["earl grey tea", "pork roast", "herbs de provence"]
+    }
+  ],
+  "meals": [
+    {
+      "id": "monday",
+      "day": "Lundi",
+      "day_letter": "L", 
+      "emoji": "🇪🇸",
+      "title": "Spanish Charcuterie Night",
+      "protein": "Spanish Charcuterie Plate with Fuet and Manchego",
+      "sides": "European crackers, Marcona almonds, cornichons, simple salad",
+      "prep": "No cooking required, 10 min assembly",
+      "wine_pairing": "Spanish Tempranillo or Albariño",
+      "recipe_id": "recipe-fuet-manchego-plate"
+    },
+    {
+      "id": "tuesday",
+      "day": "Mardi",
+      "day_letter": "T",
+      "emoji": "🇫🇷", 
+      "title": "French Luxury Pasta",
+      "protein": "Creamy Brie and Cognac Sauce over pasta",
+      "sides": "Simple arugula salad, crusty French bread",
+      "prep": "20 min total (15 min sauce, 5 min assembly)",
+      "wine_pairing": "French Chardonnay",
+      "recipe_id": "recipe-brie-cognac-sauce"
+    },
+    {
+      "id": "wednesday", 
+      "day": "Mercredi",
+      "day_letter": "W",
+      "emoji": "🇹🇭",
+      "title": "Thai Coconut Curry",
+      "protein": "Thai-Style Coconut Ginger Chicken",
+      "sides": "Jasmine rice, steamed vegetables with sesame oil",
+      "prep": "45 min total (20 min prep, 25 min cooking)",
+      "tea_pairing": "Jasmine tea",
+      "recipe_id": "recipe-coconut-ginger-chicken"
+    },
+    {
+      "id": "thursday",
+      "day": "Jeudi",
+      "day_letter": "T",
+      "emoji": "🧘",
+      "title": "Middle Eastern Fusion",
+      "protein": "Greek Yogurt Harissa Marinated Beef (marinate morning)",
+      "sides": "Roasted vegetables with za'atar, warm pita bread",
+      "prep": "45 min total (30 min marinate, 15 min cooking)",
+      "sauce": "Extra yogurt sauce with herbs and pomegranate molasses",
+      "recipe_id": "recipe-yogurt-harissa-lamb"
+    },
+    {
+      "id": "friday",
+      "day": "Vendredi", 
+      "day_letter": "F",
+      "emoji": "💨",
+      "title": "Tea-Smoked Pork Roast",
+      "protein": "Earl Grey Tea-Smoked Pork Roast (start early)",
+      "sides": "Roasted root vegetables, herbed butter potatoes", 
+      "prep": "2 hours total (15 min prep, 1.5 hours cooking)",
+      "tea_pairing": "Earl Grey tea (of course!)",
+      "recipe_id": "recipe-earl-grey-pork"
+    },
+    {
+      "id": "saturday",
+      "day": "Samedi", 
+      "day_letter": "S",
+      "emoji": "♻️",
+      "title": "Leftover Fusion Bowl",
+      "protein": "Leftover tea-smoked pork, sliced thin",
+      "sides": "Mixed greens, leftover roasted vegetables, Greek yogurt dressing",
+      "prep": "10 min assembly using leftovers",
+      "fusion": "European pork + Middle Eastern yogurt sauce"
+    },
+    {
+      "id": "sunday",
+      "day": "Dimanche",
+      "day_letter": "D", 
+      "emoji": "🥘",
+      "title": "Comfort & Prep",
+      "protein": "Simple Ground Beef Stir Fry (from existing pantry)",
+      "sides": "Steamed rice, quick-pickled vegetables",
+      "prep": "25 min cooking + meal prep for next week",
+      "planning": "Plan next week's international adventure"
+    }
+  ],
+  "grocery_categories": [
+    {
+      "id": "specialty-european",
+      "title": "🧀 European Specialties",
+      "emoji": "🧀", 
+      "color": "#dc3545",
+      "items": [
+        { "id": "additional-brie", "name": "Additional Brie cheese", "quantity": "200g wheel", "price": 8.99 },
+        { "id": "cognac-cooking", "name": "Cognac (cooking grade)", "quantity": "375ml bottle", "price": 24.99 },
+        { "id": "heavy-cream", "name": "Heavy cream 35%", "quantity": "500ml", "price": 4.49 }
+      ]
+    },
+    {
+      "id": "asian-fresh",
+      "title": "🥥 Asian Fresh Ingredients", 
+      "emoji": "🥥",
+      "color": "#28a745",
+      "items": [
+        { "id": "additional-ginger", "name": "Extra fresh ginger", "quantity": "150g piece", "price": 3.99 },
+        { "id": "fresh-lemongrass", "name": "Fresh lemongrass stalks", "quantity": "3 stalks", "price": 2.99 },
+        { "id": "thai-chilies", "name": "Thai bird chilies", "quantity": "50g pack", "price": 3.49 },
+        { "id": "lime-leaves", "name": "Kaffir lime leaves", "quantity": "15 leaves", "price": 4.99 }
+      ]
+    },
+    {
+      "id": "middle-eastern",
+      "title": "🌶️ Middle Eastern Pantry",
+      "emoji": "🌶️",
+      "color": "#f7c52d",
+      "items": [
+        { "id": "pomegranate-molasses", "name": "Pomegranate molasses", "quantity": "250ml bottle", "price": 7.99 },
+        { "id": "pita-bread", "name": "Fresh pita bread", "quantity": "1 pack (6 pieces)", "price": 3.49 }
+      ]
+    },
+    {
+      "id": "proteins",
+      "title": "🥩 Proteins",
+      "emoji": "🥩", 
+      "color": "#007bff",
+      "items": [
+        { "id": "budget-steaks-extra", "name": "Additional budget steaks", "quantity": "400g", "price": 12.99 },
+        { "id": "ground-beef-backup", "name": "Ground beef (backup)", "quantity": "500g", "price": 6.99 }
+      ]
+    },
+    {
+      "id": "fresh-produce",
+      "title": "🥬 Fresh Additions",
+      "emoji": "🥬",
+      "color": "#28a745", 
+      "items": [
+        { "id": "fresh-herbs-mix", "name": "Fresh herb mix", "quantity": "parsley, mint, dill", "price": 4.99 },
+        { "id": "arugula-extra", "name": "Extra arugula", "quantity": "2 containers", "price": 3.99 },
+        { "id": "root-vegetables", "name": "Root vegetable mix", "quantity": "carrots, parsnips, turnips", "price": 5.99 }
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "id": "sunday-prep",
+      "time": "☀️ Sunday Prep",
+      "emoji": "☀️",
+      "title": "International Ingredient Prep",
+      "duration": "45 minutes", 
+      "tasks": [
+        { "id": "task-1", "description": "Organize all specialty ingredients by cuisine" },
+        { "id": "task-2", "description": "Pre-slice charcuterie items and store properly" },
+        { "id": "task-3", "description": "Prepare yogurt-based sauces and dressings" },
+        { "id": "task-4", "description": "Set up tea-smoking station for Friday's pork" }
+      ]
+    },
+    {
+      "id": "thursday-morning",
+      "time": "🌅 Thursday Morning",
+      "emoji": "🌅",
+      "title": "Beef Marinade",
+      "duration": "5 minutes",
+      "tasks": [
+        { "id": "task-5", "description": "Marinate beef in yogurt-harissa mixture (4+ hours)" }
+      ]
+    },
+    {
+      "id": "friday-early",
+      "time": "🕐 Friday Early Start",
+      "emoji": "🕐", 
+      "title": "Tea Smoking Setup",
+      "duration": "15 minutes prep, 90 minutes cooking",
+      "tasks": [
+        { "id": "task-6", "description": "Set up tea smoking apparatus" },
+        { "id": "task-7", "description": "Begin pork roast smoking process" }
+      ]
+    }
+  ]
+}

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Minus, Trash2, Package, AlertTriangle, Check, ChevronDown, Edit3 } from "lucide-react"
+import { Plus, Trash2, Package, AlertTriangle, Check, ChevronDown, Edit3, ShoppingCart } from "lucide-react"
 import { useSimplePantry } from '@/hooks/useSimplePantry'
 import { DEFAULT_CATEGORIES, COMMON_UNITS } from '@/types/simple'
 import type { SimplePantryItem } from '@/types/simple'
@@ -18,6 +18,7 @@ export function SimplePantryView() {
     updateItemAmount, 
     updateItemUnit,
     updateItemRestockLevel,
+    updateItemAutoShopping,
     deleteItem, 
     getItemsByCategory, 
     getLowStockItems, 
@@ -75,14 +76,6 @@ export function SimplePantryView() {
     }
   }
 
-  const handleUpdateAmount = async (itemId: string, currentAmount: number, delta: number) => {
-    const newAmount = Math.max(0, currentAmount + delta)
-    try {
-      await updateItemAmount(itemId, newAmount)
-    } catch (err) {
-      console.error('Failed to update amount:', err)
-    }
-  }
 
   const handleDirectUpdateAmount = async (itemId: string, newAmount: number) => {
     if (newAmount < 0) return
@@ -286,10 +279,10 @@ export function SimplePantryView() {
                   <ItemRow
                     key={item.id}
                     item={item}
-                    onUpdateAmount={handleUpdateAmount}
                     onUpdateDirectAmount={handleDirectUpdateAmount}
                     onUpdateUnit={handleUpdateUnit}
                     onUpdateRestockLevel={handleUpdateRestockLevel}
+                    onUpdateAutoShopping={updateItemAutoShopping}
                     onDelete={handleDeleteItem}
                   />
                 ))}
@@ -316,14 +309,14 @@ export function SimplePantryView() {
 
 interface ItemRowProps {
   item: SimplePantryItem
-  onUpdateAmount: (itemId: string, currentAmount: number, delta: number) => void
   onUpdateDirectAmount: (itemId: string, newAmount: number) => void
   onUpdateUnit: (itemId: string, newUnit: string) => void
   onUpdateRestockLevel: (itemId: string, newLevel: number) => void
+  onUpdateAutoShopping: (itemId: string, autoShopping: boolean) => void
   onDelete: (itemId: string) => void
 }
 
-function ItemRow({ item, onUpdateAmount, onUpdateDirectAmount, onUpdateUnit, onUpdateRestockLevel, onDelete }: ItemRowProps) {
+function ItemRow({ item, onUpdateDirectAmount, onUpdateUnit, onUpdateRestockLevel, onUpdateAutoShopping, onDelete }: ItemRowProps) {
   const [expanded, setExpanded] = useState(false)
   const [isEditingAmount, setIsEditingAmount] = useState(false)
   const [isEditingUnit, setIsEditingUnit] = useState(false)
@@ -393,31 +386,30 @@ function ItemRow({ item, onUpdateAmount, onUpdateDirectAmount, onUpdateUnit, onU
             </div>
           </div>
           
-          {/* Quick actions */}
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation()
-                onUpdateAmount(item.id, item.current_amount, -1)
-              }}
-              disabled={item.current_amount <= 0}
-              className="h-6 w-6 p-0"
-            >
-              <Minus className="h-3 w-3" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation()
-                onUpdateAmount(item.id, item.current_amount, 1)
-              }}
-              className="h-6 w-6 p-0"
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
+          {/* Auto-restock checkbox */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center space-x-1">
+              <input
+                type="checkbox"
+                id={`auto-${item.id}`}
+                checked={item.auto_add_to_shopping || false}
+                onChange={(e) => {
+                  e.stopPropagation()
+                  onUpdateAutoShopping(item.id, e.target.checked)
+                }}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <label 
+                htmlFor={`auto-${item.id}`} 
+                className="text-xs text-gray-600 cursor-pointer select-none"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Auto
+              </label>
+            </div>
+            {item.auto_add_to_shopping && (
+              <ShoppingCart className="h-3 w-3 text-blue-500" />
+            )}
           </div>
         </div>
         
@@ -581,11 +573,29 @@ function ItemRow({ item, onUpdateAmount, onUpdateDirectAmount, onUpdateUnit, onU
           </div>
 
           {/* Additional info */}
-          <div className="text-xs text-muted-foreground pt-2 border-t flex justify-between">
-            <span>Added by {item.added_by}</span>
-            {item.min_buy_amount && (
-              <span>Min buy: {item.min_buy_amount} {item.unit}</span>
-            )}
+          <div className="text-xs text-muted-foreground pt-2 border-t space-y-1">
+            <div className="flex justify-between">
+              <span>Added by {item.added_by}</span>
+              {item.min_buy_amount && (
+                <span>Min buy: {item.min_buy_amount} {item.unit}</span>
+              )}
+            </div>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  item.auto_add_to_shopping 
+                    ? 'bg-blue-100 text-blue-700' 
+                    : 'bg-gray-100 text-gray-600'
+                }`}>
+                  {item.auto_add_to_shopping ? '🛒 Auto-restock enabled' : 'Manual restock only'}
+                </span>
+              </div>
+              {item.seasonal_availability && (
+                <span className="text-xs text-orange-600">
+                  🗓️ Seasonal ({item.seasonal_availability.months.length} months)
+                </span>
+              )}
+            </div>
           </div>
         </div>
       )}
