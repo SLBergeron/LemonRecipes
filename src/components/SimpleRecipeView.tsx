@@ -6,11 +6,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Trash2, BookOpen, CheckCircle, AlertCircle, Clock, Users } from "lucide-react"
+import { Plus, Trash2, BookOpen, CheckCircle, AlertCircle, Clock, Users, Package } from "lucide-react"
 import { useSimpleRecipes } from '@/hooks/useSimpleRecipes'
 import { useSimplePantry } from '@/hooks/useSimplePantry'
+import { PantryIngredientPicker } from '@/components/PantryIngredientPicker'
 import { COMMON_UNITS } from '@/types/simple'
-import type { SimpleRecipe } from '@/types/simple'
+import type { SimpleRecipe, RecipeIngredient } from '@/types/simple'
 
 type RecipeFilter = 'all' | 'can-make' | 'missing-ingredients'
 
@@ -30,7 +31,14 @@ export function SimpleRecipeView() {
   const [showAddForm, setShowAddForm] = useState(false)
   const [selectedRecipe, setSelectedRecipe] = useState<SimpleRecipe | null>(null)
   
-  const [newRecipe, setNewRecipe] = useState({
+  const [newRecipe, setNewRecipe] = useState<{
+    title: string
+    servings: number
+    prepTime: number
+    cookTime: number
+    ingredients: RecipeIngredient[]
+    instructions: string[]
+  }>({
     title: '',
     servings: 4,
     prepTime: 0,
@@ -72,6 +80,13 @@ export function SimpleRecipeView() {
     setNewRecipe(prev => ({
       ...prev,
       ingredients: [...prev.ingredients, { name: '', amount: 1, unit: 'cups', optional: false }]
+    }))
+  }
+
+  const handleAddPantryIngredient = (ingredient: RecipeIngredient) => {
+    setNewRecipe(prev => ({
+      ...prev,
+      ingredients: [...prev.ingredients, ingredient]
     }))
   }
 
@@ -269,10 +284,21 @@ export function SimpleRecipeView() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label>Ingredients</Label>
-                <Button variant="outline" size="sm" onClick={handleAddIngredient}>
-                  <Plus className="h-3 w-3 mr-1" />
-                  Add
-                </Button>
+                <div className="flex gap-2">
+                  <PantryIngredientPicker 
+                    pantry={pantry} 
+                    onAddIngredient={handleAddPantryIngredient}
+                  >
+                    <Button variant="outline" size="sm">
+                      <Package className="h-3 w-3 mr-1" />
+                      From Pantry
+                    </Button>
+                  </PantryIngredientPicker>
+                  <Button variant="outline" size="sm" onClick={handleAddIngredient}>
+                    <Plus className="h-3 w-3 mr-1" />
+                    Manual
+                  </Button>
+                </div>
               </div>
               
               {newRecipe.ingredients.map((ingredient, index) => (

@@ -112,3 +112,21 @@ export function DialogFooter({ children, className }: DialogFooterProps) {
     </div>
   )
 }
+
+interface DialogTriggerProps {
+  asChild?: boolean
+  children: React.ReactNode
+  onClick?: () => void
+}
+
+export function DialogTrigger({ asChild = false, children, onClick }: DialogTriggerProps) {
+  if (asChild) {
+    return React.cloneElement(children as React.ReactElement, { onClick })
+  }
+  
+  return (
+    <button onClick={onClick}>
+      {children}
+    </button>
+  )
+}

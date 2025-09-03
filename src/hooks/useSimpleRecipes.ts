@@ -10,6 +10,7 @@ import {
   getCurrentUser,
   calculateRecipeAvailability 
 } from '@/lib/simple-utils'
+import { sampleRecipes } from '@/data/sample-recipes'
 
 export function useSimpleRecipes(pantry: SimplePantryInventory | null) {
   const [recipes, setRecipes] = useState<SimpleRecipe[]>([])
@@ -47,12 +48,12 @@ export function useSimpleRecipes(pantry: SimplePantryInventory | null) {
             throw new Error('No existing recipes')
           }
         } catch {
-          // Initialize with empty recipe collection
+          // Initialize with sample recipes
           const collection: RecipeCollection = {
-            recipes: [],
+            recipes: sampleRecipes,
             last_updated: new Date().toISOString()
           }
-          setRecipes([])
+          setRecipes(sampleRecipes)
           saveRecipesToStorage(collection)
         }
       } catch (err) {
