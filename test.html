@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Test</title>
+</head>
+<body>
+    <h1>Debug Test Page</h1>
+    <p>If you see this, the site is working.</p>
+    <div id="test-div"></div>
+    
+    <script>
+        console.log('Test script running');
+        document.getElementById('test-div').innerHTML = 'JavaScript is working: ' + new Date();
+        
+        // Test if React scripts exist
+        fetch('./assets/index-CH-n_pLU.js')
+            .then(response => {
+                console.log('React script status:', response.status);
+                document.getElementById('test-div').innerHTML += '<br>React script status: ' + response.status;
+            })
+            .catch(error => {
+                console.error('Error loading React script:', error);
+                document.getElementById('test-div').innerHTML += '<br>Error loading React script: ' + error;
+            });
+            
+        // Test if API endpoints exist
+        fetch('./api/pantry-inventory.json')
+            .then(response => {
+                console.log('API endpoint status:', response.status);
+                document.getElementById('test-div').innerHTML += '<br>API endpoint status: ' + response.status;
+            })
+            .catch(error => {
+                console.error('Error loading API:', error);
+                document.getElementById('test-div').innerHTML += '<br>Error loading API: ' + error;
+            });
+    </script>
+</body>
+</html>
