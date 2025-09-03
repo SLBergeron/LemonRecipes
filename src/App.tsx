@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart, Calendar, Users, Clock, Package } from "lucide-react"
 import { MealCard } from "@/components/meal-plan/MealCard"
@@ -7,12 +7,41 @@ import { GroceryList } from "@/components/grocery/GroceryList"
 import { PantryInventory } from "@/components/pantry/PantryInventory"
 import { getCurrentMealPlan, formatCurrency, getBudgetProgress } from "@/lib/data"
 import { usePantryInventory } from "@/hooks/usePantryInventory"
+import type { MealPlan } from "@/types"
 import './App.css'
 
 function App() {
   const [activeView, setActiveView] = useState<'meal-plan' | 'grocery-list' | 'timeline' | 'pantry'>('meal-plan')
-  const mealPlan = getCurrentMealPlan()
+  const [mealPlan, setMealPlan] = useState<MealPlan | null>(null)
+  const [loading, setLoading] = useState(true)
   const { pantry, updateItemAmount } = usePantryInventory()
+
+  useEffect(() => {
+    const loadMealPlan = async () => {
+      try {
+        const data = await getCurrentMealPlan()
+        setMealPlan(data)
+      } catch (error) {
+        console.error('Failed to load meal plan:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadMealPlan()
+  }, [])
+
+  if (loading || !mealPlan) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="text-6xl">🍋</div>
+          <h1 className="text-2xl font-bold">Loading LemonRecipes...</h1>
+          <p className="text-muted-foreground">Setting up your meal plan</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import type { PantryInventory } from '@/types/pantry'
-import pantryData from '@/data/pantry-inventory.json'
 
 export function usePantryInventory() {
   const [pantry, setPantry] = useState<PantryInventory | null>(null)
@@ -8,13 +7,46 @@ export function usePantryInventory() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    try {
-      setPantry(pantryData as PantryInventory)
-      setLoading(false)
-    } catch (err) {
-      setError('Failed to load pantry inventory')
-      setLoading(false)
+    const loadPantryData = async () => {
+      try {
+        const response = await fetch('./api/pantry-inventory.json')
+        if (!response.ok) {
+          throw new Error(`Failed to load pantry data: ${response.status}`)
+        }
+        const data = await response.json()
+        setPantry(data as PantryInventory)
+        setLoading(false)
+      } catch (err) {
+        console.error('Error loading pantry data:', err)
+        setError('Failed to load pantry inventory')
+        // Set minimal fallback data
+        setPantry({
+          last_updated: new Date().toISOString().split('T')[0],
+          categories: [
+            {
+              id: 'loading',
+              title: 'Loading...',
+              emoji: '🍋',
+              color: '#FBD38D',
+              items: [
+                {
+                  id: 'loading-item',
+                  name: 'Loading pantry data...',
+                  current_amount: '0%',
+                  unit: '%',
+                  total_capacity: '100%',
+                  expires: '2025-12-31',
+                  price_per_unit: 0
+                }
+              ]
+            }
+          ]
+        } as PantryInventory)
+        setLoading(false)
+      }
     }
+
+    loadPantryData()
   }, [])
 
   const updateItemAmount = (itemId: string, newAmount: string) => {

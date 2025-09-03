@@ -1,9 +1,45 @@
 import type { MealPlan } from "@/types"
-import mealPlanData from "@/data/meal-plan-2025-09-03.json"
 
 // Load meal plan data
-export function getCurrentMealPlan(): MealPlan {
-  return mealPlanData as MealPlan
+export async function getCurrentMealPlan(): Promise<MealPlan> {
+  try {
+    const response = await fetch('./api/meal-plan-2025-09-03.json')
+    if (!response.ok) {
+      throw new Error(`Failed to load meal plan: ${response.status}`)
+    }
+    return await response.json()
+  } catch (error) {
+    console.error('Error loading meal plan:', error)
+    // Return minimal fallback data
+    return {
+      id: 'fallback-2025-09-03',
+      title: 'LemonRecipes Meal Plan',
+      date: new Date().toISOString().split('T')[0],
+      season: 'fall' as const,
+      farmers_market_available: true,
+      budget_target: 165,
+      estimated_cost: 185,
+      prep_time_total: '30 minutes',
+      shopping_locations: ['Farm Boy'],
+      tags: ['loading'],
+      meal_prep_friendly: true,
+      leftover_integration: true,
+      author: 'LemonRecipes',
+      active_ingredients: [],
+      strategy: [
+        {
+          emoji: '🍋',
+          title: 'Loading...',
+          description: 'Meal plan data is loading...',
+          color: '#FBD38D'
+        }
+      ],
+      meals: [],
+      batch_sauces: [],
+      grocery_categories: [],
+      timeline: []
+    } as MealPlan
+  }
 }
 
 // Calculate total grocery cost
