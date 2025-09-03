@@ -391,12 +391,12 @@ function ShoppingItemRow({ item, onToggle, onRemove, onUpdateQuantity }: Shoppin
         <div className="flex-1 min-w-0">
           <div className={`font-medium ${item.checked ? 'line-through text-muted-foreground' : ''}`}>
             {isEditing ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 flex-wrap">
                 <Input
                   type="number"
                   value={editAmount}
                   onChange={(e) => setEditAmount(e.target.value)}
-                  className="w-20 h-8 text-sm"
+                  className="w-16 h-8 text-sm flex-shrink-0"
                   step="0.1"
                   min="0"
                   onKeyDown={(e) => {
@@ -405,8 +405,8 @@ function ShoppingItemRow({ item, onToggle, onRemove, onUpdateQuantity }: Shoppin
                   }}
                   autoFocus
                 />
-                <span>{item.unit} {item.name}</span>
-                <div className="flex gap-1">
+                <span className="text-sm flex-1 min-w-0 truncate">{item.unit} {item.name}</span>
+                <div className="flex gap-1 flex-shrink-0">
                   <Button size="sm" variant="ghost" onClick={handleSave} className="h-6 w-6 p-0">
                     <Check className="h-3 w-3 text-green-600" />
                   </Button>
@@ -418,14 +418,17 @@ function ShoppingItemRow({ item, onToggle, onRemove, onUpdateQuantity }: Shoppin
             ) : (
               <button
                 onClick={() => setIsEditing(true)}
-                className="hover:bg-gray-100 px-1 py-0.5 rounded"
+                className="hover:bg-gray-100 px-1 py-0.5 rounded text-left w-full"
+                title="Click to edit quantity"
               >
-                {item.amount} {item.unit} {item.name}
+                <span className="font-medium">{item.amount} {item.unit}</span> {item.name}
               </button>
             )}
           </div>
           <div className="text-sm text-muted-foreground">
-            Needed for: {item.needed_for.join(', ')}
+            <span className="hidden sm:inline">Needed for: </span>
+            <span className="sm:hidden">For: </span>
+            <span className="break-words">{item.needed_for.join(', ')}</span>
           </div>
         </div>
       </div>

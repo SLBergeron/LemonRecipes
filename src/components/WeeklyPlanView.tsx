@@ -47,9 +47,11 @@ export function WeeklyPlanView() {
 
   const [showAddMeal, setShowAddMeal] = useState(false)
   const [showQuickAdd, setShowQuickAdd] = useState(false)
+  const [showRecipeViewer, setShowRecipeViewer] = useState(false)
   const [selectedDay, setSelectedDay] = useState<DayOfWeek>('monday')
   const [selectedMealType, setSelectedMealType] = useState<MealType>('dinner')
   const [selectedRecipe, setSelectedRecipe] = useState<string>('')
+  const [viewingRecipe, setViewingRecipe] = useState<string | null>(null)
   const [servings, setServings] = useState(4)
 
   if (loading) {
@@ -125,6 +127,11 @@ export function WeeklyPlanView() {
     } catch (err) {
       console.error('Failed to add meal:', err)
     }
+  }
+
+  const handleViewRecipe = (recipeId: string) => {
+    setViewingRecipe(recipeId)
+    setShowRecipeViewer(true)
   }
 
   return (
@@ -354,6 +361,76 @@ export function WeeklyPlanView() {
         </Card>
       )}
 
+      {/* Recipe Viewer Modal */}
+      {showRecipeViewer && viewingRecipe && (
+        <Card className="border-green-200 bg-green-50">
+          <CardHeader>
+            <CardTitle className="text-green-800 flex items-center justify-between">
+              <span>Recipe Details</span>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowRecipeViewer(false)}
+                className="text-green-600 hover:text-green-800"
+              >
+                ✕
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {(() => {
+              const recipe = recipes.find(r => r.id === viewingRecipe)
+              if (!recipe) {
+                return <p className="text-muted-foreground">Recipe not found</p>
+              }
+              
+              return (
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-bold text-lg">{recipe.title}</h3>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
+                      <span>Serves {recipe.servings}</span>
+                      {recipe.prep_time > 0 && <span>Prep: {recipe.prep_time}m</span>}
+                      {recipe.cook_time > 0 && <span>Cook: {recipe.cook_time}m</span>}
+                      <Badge variant={recipe.can_make ? "default" : "destructive"}>
+                        {recipe.can_make ? "Can Make" : "Missing Ingredients"}
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold mb-2">Ingredients:</h4>
+                    <div className="grid gap-1">
+                      {recipe.ingredients.map((ingredient, index) => (
+                        <div key={index} className="text-sm flex justify-between">
+                          <span>{ingredient.name}</span>
+                          <span className="text-muted-foreground">
+                            {ingredient.amount} {ingredient.unit}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {recipe.instructions.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold mb-2">Instructions:</h4>
+                      <ol className="list-decimal list-inside space-y-1">
+                        {recipe.instructions.map((instruction, index) => (
+                          <li key={index} className="text-sm break-words">
+                            {instruction}
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  )}
+                </div>
+              )
+            })()}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Weekly Calendar */}
       <div className="grid gap-4">
         {DAYS.map(day => {
@@ -377,47 +454,51 @@ export function WeeklyPlanView() {
                       return (
                         <div 
                           key={meal.id} 
-                          className={`flex items-center justify-between p-3 border rounded-lg ${
+                          className={`flex items-start gap-2 sm:gap-3 p-2 sm:p-3 border rounded-lg ${
                             meal.completed ? 'bg-green-50 border-green-200' : ''
                           }`}
                         >
-                          <div className="flex items-center gap-3">
-                            <button
-                              onClick={() => handleToggleCompleted(meal.id, !meal.completed)}
-                              className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                                meal.completed 
-                                  ? 'bg-green-500 border-green-500 text-white' 
-                                  : 'border-gray-300 hover:border-green-400'
-                              }`}
-                            >
-                              {meal.completed && <Check className="h-3 w-3" />}
-                            </button>
-                            
-                            <div>
-                              <div className="font-medium flex items-center gap-2">
-                                <span>{mealType?.icon}</span>
-                                <span className={meal.completed ? 'line-through text-muted-foreground' : ''}>
-                                  {meal.recipe_title}
-                                </span>
-                                {!recipe?.can_make && (
-                                  <Badge variant="outline" className="text-orange-600">
-                                    Missing ingredients
-                                  </Badge>
-                                )}
-                              </div>
-                              <div className="text-sm text-muted-foreground flex items-center gap-4">
-                                <span className="capitalize">{meal.meal_type}</span>
+                          <button
+                            onClick={() => handleToggleCompleted(meal.id, !meal.completed)}
+                            className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                              meal.completed 
+                                ? 'bg-green-500 border-green-500 text-white' 
+                                : 'border-gray-300 hover:border-green-400'
+                            }`}
+                          >
+                            {meal.completed && <Check className="h-3 w-3" />}
+                          </button>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start gap-1 flex-wrap">
+                              <span className="text-lg flex-shrink-0">{mealType?.icon}</span>
+                              <button
+                                onClick={() => handleViewRecipe(meal.recipe_id)}
+                                className={`font-medium text-left hover:text-blue-600 underline-offset-2 hover:underline flex-1 min-w-0 ${
+                                  meal.completed ? 'line-through text-muted-foreground' : ''
+                                }`}
+                                title="Click to view recipe"
+                              >
+                                <span className="break-words">{meal.recipe_title}</span>
+                              </button>
+                              {!recipe?.can_make && (
+                                <Badge variant="outline" className="text-orange-600 text-xs whitespace-nowrap">
+                                  Missing ingredients
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap mt-1">
+                              <span className="capitalize">{meal.meal_type}</span>
+                              <span className="flex items-center gap-1">
+                                <Users className="h-3 w-3" />
+                                {meal.servings}
+                              </span>
+                              {recipe && (recipe.prep_time > 0 || recipe.cook_time > 0) && (
                                 <span className="flex items-center gap-1">
-                                  <Users className="h-3 w-3" />
-                                  {meal.servings}
+                                  <Clock className="h-3 w-3" />
+                                  {recipe.prep_time + recipe.cook_time}m
                                 </span>
-                                {recipe && (recipe.prep_time > 0 || recipe.cook_time > 0) && (
-                                  <span className="flex items-center gap-1">
-                                    <Clock className="h-3 w-3" />
-                                    {recipe.prep_time + recipe.cook_time}m
-                                  </span>
-                                )}
-                              </div>
+                              )}
                             </div>
                           </div>
                           

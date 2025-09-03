@@ -12,12 +12,16 @@ import {
   getCurrentUser
 } from '@/lib/simple-utils'
 import { initialPantryData } from '@/data/initial-pantry'
+import { usePantrySync } from './useRealtimeSync'
 
 // Hook for managing simplified pantry inventory
 export function useSimplePantry() {
   const [pantry, setPantry] = useState<SimplePantryInventory | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Enable real-time synchronization
+  const { broadcastUpdate } = usePantrySync(pantry, setPantry)
 
   // Initialize pantry with default structure and initial data
   const initializePantry = useCallback((): SimplePantryInventory => {
@@ -79,14 +83,18 @@ export function useSimplePantry() {
     loadPantryData()
   }, [initializePantry])
 
-  // Save pantry to localStorage
+  // Save pantry to localStorage and broadcast to other tabs
   const savePantryToStorage = useCallback((pantryData: SimplePantryInventory) => {
     try {
-      localStorage.setItem('simple-pantry', JSON.stringify(pantryData))
+      const updatedData = {
+        ...pantryData,
+        last_updated: new Date().toISOString()
+      }
+      broadcastUpdate(updatedData)
     } catch (err) {
       console.error('Failed to save pantry to localStorage:', err)
     }
-  }, [])
+  }, [broadcastUpdate])
 
   // Add new item to pantry
   const addItem = useCallback((name: string, amount: number, unit: string, categoryId: string) => {
