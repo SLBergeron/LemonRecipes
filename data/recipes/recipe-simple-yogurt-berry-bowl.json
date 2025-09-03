@@ -1,0 +1,49 @@
+{
+  "id": "recipe-simple-yogurt-berry-bowl",
+  "title": "Greek Yogurt Berry Bowl",
+  "servings": 1,
+  "prep_time": 5,
+  "cook_time": 0,
+  "ingredients": [
+    {
+      "name": "Greek Yogurt",
+      "amount": 250,
+      "unit": "g",
+      "pantry_item_id": "dairy-greek-yogurt"
+    },
+    {
+      "name": "Mixed Berries",
+      "amount": 100,
+      "unit": "g",
+      "pantry_item_id": "fruit-mixed-berries"
+    },
+    {
+      "name": "Muesli",
+      "amount": 30,
+      "unit": "g", 
+      "pantry_item_id": "pantry-muesli"
+    },
+    {
+      "name": "Almonds",
+      "amount": 15,
+      "unit": "g",
+      "pantry_item_id": "snack-almonds"
+    },
+    {
+      "name": "Honey",
+      "amount": 15,
+      "unit": "ml",
+      "pantry_item_id": "pantry-honey"
+    }
+  ],
+  "instructions": [
+    "Place Greek yogurt in bowl",
+    "Top with mixed berries",
+    "Sprinkle muesli and almonds on top",
+    "Drizzle with honey",
+    "Serve immediately"
+  ],
+  "tags": ["breakfast", "no-cook", "healthy", "quick"],
+  "created_by": "simon",
+  "created_at": "2025-09-03T19:47:00.000Z"
+}
