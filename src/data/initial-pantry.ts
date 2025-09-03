@@ -1,15 +1,15 @@
 import type { SimplePantryItem } from '@/types/simple'
 
 export const initialPantryData: SimplePantryItem[] = [
-  // Meat & Proteins
-  { id: 'meat-ground-beef', name: 'Medium Ground Beef', current_amount: 5, unit: 'lbs', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'meat-pork-roast', name: 'Pork Roast', current_amount: 5, unit: 'lbs', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'meat-chicken-legs', name: 'Chicken Legs/Thighs', current_amount: 5, unit: 'lbs', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'meat-budget-steaks', name: 'Budget Steaks', current_amount: 5, unit: 'lbs', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'meat-beef-roast', name: 'Beef Roast', current_amount: 5, unit: 'lbs', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'meat-beef-ribs', name: 'Beef Ribs', current_amount: 5, unit: 'lbs', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'meat-beef-stew', name: 'Beef Stew/Stir Fry', current_amount: 3, unit: 'lbs', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() },
-  { id: 'meat-beef-patties', name: 'All Beef Patties', current_amount: 2, unit: 'lbs', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() },
+  // Meat & Proteins (converted to grams for precision)
+  { id: 'meat-ground-beef', name: 'Medium Ground Beef', current_amount: 2270, unit: 'g', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() }, // 5 lbs
+  { id: 'meat-pork-roast', name: 'Pork Roast', current_amount: 2270, unit: 'g', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() }, // 5 lbs
+  { id: 'meat-chicken-legs', name: 'Chicken Legs/Thighs', current_amount: 2270, unit: 'g', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() }, // 5 lbs
+  { id: 'meat-budget-steaks', name: 'Budget Steaks', current_amount: 2270, unit: 'g', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() }, // 5 lbs
+  { id: 'meat-beef-roast', name: 'Beef Roast', current_amount: 2270, unit: 'g', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() }, // 5 lbs
+  { id: 'meat-beef-ribs', name: 'Beef Ribs', current_amount: 2270, unit: 'g', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() }, // 5 lbs
+  { id: 'meat-beef-stew', name: 'Beef Stew/Stir Fry', current_amount: 1362, unit: 'g', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() }, // 3 lbs
+  { id: 'meat-beef-patties', name: 'All Beef Patties', current_amount: 908, unit: 'g', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() }, // 2 lbs
   { id: 'meat-bacon', name: 'Double Smoked Sliced Bacon', current_amount: 375, unit: 'g', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() },
   { id: 'protein-seitan', name: 'Beefless Tenders (Seitan)', current_amount: 350, unit: 'g', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() },
   { id: 'protein-tofu', name: 'Firm Tofu', current_amount: 450, unit: 'g', category: 'proteins', added_by: 'simon', updated_at: new Date().toISOString() },

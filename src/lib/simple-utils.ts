@@ -69,7 +69,11 @@ export function isLowStock(item: SimplePantryItem): boolean {
       return item.current_amount <= 1 // 1 pound or less
     
     case 'g':
-      return item.current_amount <= 25 // 25g or less for spices/small quantities
+      // Different thresholds for different types of items in grams
+      if (item.current_amount > 1000) {
+        return item.current_amount <= 200 // Large quantities (meat): 200g or less
+      }
+      return item.current_amount <= 25 // Small quantities (spices): 25g or less
     
     case 'ml':
       return item.current_amount <= 50 // 50ml or less for liquids
