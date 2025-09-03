@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug - LemonRecipes</title>
+</head>
+<body>
+    <h1>🍋 Debug Page</h1>
+    <div id="debug-info"></div>
+    <script>
+        console.log('Debug script loading...');
+        
+        // Check if main JS loads
+        fetch('./assets/index-Dyx0g1ci.js')
+            .then(r => {
+                console.log('JS file status:', r.status);
+                return r.text();
+            })
+            .then(text => {
+                console.log('JS file size:', text.length);
+                document.getElementById('debug-info').innerHTML = `
+                    <p>✅ JS file loads: ${text.length} bytes</p>
+                    <p>✅ CSS file: checking...</p>
+                `;
+            })
+            .catch(e => {
+                console.error('JS file error:', e);
+                document.getElementById('debug-info').innerHTML = `
+                    <p>❌ JS file failed to load: ${e}</p>
+                `;
+            });
+            
+        // Check CSS
+        fetch('./assets/index-DXOfbXto.css')
+            .then(r => console.log('CSS status:', r.status))
+            .catch(e => console.error('CSS error:', e));
+            
+        console.log('Debug script complete');
+    </script>
+</body>
+</html>
