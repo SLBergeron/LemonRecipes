@@ -116,8 +116,9 @@ export function createRecipe(
 export function calculateRecipeAvailability(
   recipe: SimpleRecipe, 
   pantry: SimplePantryInventory
-): { can_make: boolean; missing_ingredients: string[] } {
+): { can_make: boolean; missing_ingredients: string[]; ingredient_availability: Record<string, { available: boolean; pantry_item_id?: string; reason?: string }> } {
   const missing: string[] = []
+  const ingredient_availability: Record<string, { available: boolean; pantry_item_id?: string; reason?: string }> = {}
   const pantryItems = pantry.categories.flatMap(cat => cat.items)
   
   for (const ingredient of recipe.ingredients) {
@@ -140,19 +141,35 @@ export function calculateRecipeAvailability(
     
     if (!pantryItem) {
       missing.push(ingredient.name)
+      ingredient_availability[ingredient.name] = {
+        available: false,
+        reason: 'Not found in pantry'
+      }
       continue
     }
     
     // Check if we have enough quantity with unit matching
     const hasEnough = checkQuantityAvailability(ingredient, pantryItem)
     if (!hasEnough) {
-      missing.push(`${ingredient.name} (need ${ingredient.amount} ${ingredient.unit}, have ${pantryItem.current_amount} ${pantryItem.unit})`)
+      const shortageReason = `Need ${ingredient.amount} ${ingredient.unit}, have ${pantryItem.current_amount} ${pantryItem.unit}`
+      missing.push(`${ingredient.name} (${shortageReason})`)
+      ingredient_availability[ingredient.name] = {
+        available: false,
+        pantry_item_id: pantryItem.id,
+        reason: shortageReason
+      }
+    } else {
+      ingredient_availability[ingredient.name] = {
+        available: true,
+        pantry_item_id: pantryItem.id
+      }
     }
   }
   
   return {
     can_make: missing.length === 0,
-    missing_ingredients: missing
+    missing_ingredients: missing,
+    ingredient_availability
   }
 }
 
@@ -200,18 +217,41 @@ export function deductIngredientsFromPantry(
   servings: number = recipe.servings
 ): SimplePantryInventory {
   const scaleFactor = servings / recipe.servings
+  
   const updatedCategories = pantry.categories.map(category => ({
     ...category,
     items: category.items.map(item => {
-      // Find matching ingredient in recipe
-      const matchingIngredient = recipe.ingredients.find(ing =>
-        item.name.toLowerCase().includes(ing.name.toLowerCase()) ||
-        ing.name.toLowerCase().includes(item.name.toLowerCase())
-      )
+      // Find matching ingredient in recipe using the same logic as availability check
+      const matchingIngredient = recipe.ingredients.find(ingredient => {
+        if (ingredient.optional) return false
+        
+        // First try to match by pantry_item_id if provided
+        if (ingredient.pantry_item_id && item.id === ingredient.pantry_item_id) {
+          return true
+        }
+        
+        // Fall back to name matching
+        return item.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
+               ingredient.name.toLowerCase().includes(item.name.toLowerCase()) ||
+               normalizeIngredientName(item.name) === normalizeIngredientName(ingredient.name)
+      })
       
-      if (matchingIngredient && item.unit === matchingIngredient.unit) {
-        const amountToDeduct = matchingIngredient.amount * scaleFactor
-        return updatePantryItemAmount(item, item.current_amount - amountToDeduct)
+      if (matchingIngredient) {
+        // Use unit conversion to determine how much to deduct
+        let amountToDeduct = 0
+        const convertedAmount = convertUnits(matchingIngredient.amount * scaleFactor, matchingIngredient.unit, item.unit)
+        
+        if (convertedAmount !== null) {
+          amountToDeduct = convertedAmount
+        } else if (item.unit === matchingIngredient.unit) {
+          amountToDeduct = matchingIngredient.amount * scaleFactor
+        }
+        // If we can't convert units, don't deduct anything (safer approach)
+        
+        if (amountToDeduct > 0) {
+          console.log(`Deducting ${amountToDeduct} ${item.unit} of ${item.name} from pantry`)
+          return updatePantryItemAmount(item, item.current_amount - amountToDeduct)
+        }
       }
       
       return item

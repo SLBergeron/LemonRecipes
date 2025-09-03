@@ -99,7 +99,8 @@ export function useSimpleRecipes(pantry: SimplePantryInventory | null) {
       return {
         ...recipe,
         can_make: availability.can_make,
-        missing_ingredients: availability.missing_ingredients
+        missing_ingredients: availability.missing_ingredients,
+        ingredient_availability: availability.ingredient_availability
       }
     }))
   }, [pantry])
@@ -129,6 +130,7 @@ export function useSimpleRecipes(pantry: SimplePantryInventory | null) {
       const availability = calculateRecipeAvailability(newRecipe, pantry)
       newRecipe.can_make = availability.can_make
       newRecipe.missing_ingredients = availability.missing_ingredients
+      newRecipe.ingredient_availability = availability.ingredient_availability
     }
 
     const updatedRecipes = [...recipes, newRecipe]
@@ -154,6 +156,7 @@ export function useSimpleRecipes(pantry: SimplePantryInventory | null) {
           const availability = calculateRecipeAvailability(updatedRecipe, pantry)
           updatedRecipe.can_make = availability.can_make
           updatedRecipe.missing_ingredients = availability.missing_ingredients
+          updatedRecipe.ingredient_availability = availability.ingredient_availability
         }
         
         return updatedRecipe

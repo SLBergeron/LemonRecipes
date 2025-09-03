@@ -60,6 +60,7 @@ export interface SimpleRecipe {
   created_at: string
   can_make?: boolean // Calculated based on pantry availability
   missing_ingredients?: string[] // Calculated missing items
+  ingredient_availability?: Record<string, { available: boolean; pantry_item_id?: string; reason?: string }> // Detailed ingredient availability
 }
 
 export interface RecipeCollection {

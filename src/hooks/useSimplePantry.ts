@@ -315,6 +315,12 @@ export function useSimplePantry() {
     }
   }
 
+  // Update entire pantry (for meal completion deductions)
+  const updatePantry = useCallback((updatedPantry: SimplePantryInventory) => {
+    setPantry(updatedPantry)
+    savePantryToStorage(updatedPantry)
+  }, [savePantryToStorage])
+
   return {
     pantry,
     loading,
@@ -325,6 +331,7 @@ export function useSimplePantry() {
     updateItemRestockLevel,
     updateItemAutoShopping,
     deleteItem,
+    updatePantry,
     getItemsByCategory,
     getLowStockItems,
     getStats

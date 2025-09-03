@@ -28,7 +28,7 @@ const MEAL_TYPES: { id: MealType; name: string; icon: string }[] = [
 ]
 
 export function WeeklyPlanView() {
-  const { pantry } = useSimplePantry()
+  const { pantry, updatePantry } = useSimplePantry()
   const { recipes } = useSimpleRecipes(pantry)
   const {
     currentPlan,
@@ -43,7 +43,7 @@ export function WeeklyPlanView() {
     goToPreviousWeek,
     goToNextWeek,
     goToCurrentWeek
-  } = useWeeklyPlan(recipes, pantry)
+  } = useWeeklyPlan(recipes, pantry, updatePantry)
 
   const [showAddMeal, setShowAddMeal] = useState(false)
   const [showQuickAdd, setShowQuickAdd] = useState(false)

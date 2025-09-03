@@ -527,21 +527,34 @@ function RecipeDetail({ recipe, onBack, onDelete }: RecipeDetailProps) {
           <div>
             <h3 className="font-semibold mb-3">Ingredients</h3>
             <div className="space-y-2">
-              {recipe.ingredients.map((ingredient, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <span className={ingredient.optional ? 'text-muted-foreground italic' : ''}>
-                    {ingredient.amount} {ingredient.unit} {ingredient.name}
-                    {ingredient.optional && ' (optional)'}
-                  </span>
-                  {!recipe.can_make && recipe.missing_ingredients?.some(missing => 
-                    missing.toLowerCase().includes(ingredient.name.toLowerCase())
-                  ) && (
-                    <Badge variant="outline" className="text-orange-600 border-orange-200">
-                      Missing
-                    </Badge>
-                  )}
-                </div>
-              ))}
+              {recipe.ingredients.map((ingredient, index) => {
+                const availability = recipe.ingredient_availability?.[ingredient.name]
+                const isAvailable = availability?.available !== false
+                const isMissing = !isAvailable && !ingredient.optional
+                
+                return (
+                  <div key={index} className="flex items-center justify-between">
+                    <span className={`${ingredient.optional ? 'text-muted-foreground italic' : ''} ${
+                      isMissing ? 'text-orange-700 font-medium' : ''
+                    }`}>
+                      {ingredient.amount} {ingredient.unit} {ingredient.name}
+                      {ingredient.optional && ' (optional)'}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {isMissing && (
+                        <Badge variant="outline" className="text-orange-600 border-orange-200">
+                          Missing
+                        </Badge>
+                      )}
+                      {isAvailable && !ingredient.optional && (
+                        <Badge variant="outline" className="text-green-600 border-green-200">
+                          Available
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
 

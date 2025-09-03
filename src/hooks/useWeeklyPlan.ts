@@ -9,12 +9,14 @@ import type {
 } from '@/types/simple'
 import { 
   createWeeklyPlan, 
-  getWeekOf 
+  getWeekOf,
+  deductIngredientsFromPantry 
 } from '@/lib/simple-utils'
 
 export function useWeeklyPlan(
   recipes: SimpleRecipe[], 
-  _pantry: SimplePantryInventory | null
+  pantry: SimplePantryInventory | null,
+  updatePantry?: (updatedPantry: SimplePantryInventory) => void
 ) {
   const [currentPlan, setCurrentPlan] = useState<WeeklyPlan | null>(null)
   const [currentWeek, setCurrentWeek] = useState(getWeekOf())
@@ -114,23 +116,44 @@ export function useWeeklyPlan(
   const markMealCompleted = useCallback(async (mealId: string, completed: boolean) => {
     if (!currentPlan) return
 
+    // Find the meal being completed
+    const meal = currentPlan.meals.find(m => m.id === mealId)
+    if (!meal) return
+
+    // If marking as completed and we have pantry and recipe data, deduct ingredients
+    if (completed && pantry && updatePantry) {
+      const recipe = recipes.find(r => r.id === meal.recipe_id)
+      if (recipe) {
+        console.log(`Meal completed: ${meal.recipe_title} (${meal.servings} servings)`)
+        console.log('Deducting ingredients from pantry...')
+        
+        try {
+          const updatedPantry = deductIngredientsFromPantry(recipe, pantry, meal.servings)
+          updatePantry(updatedPantry)
+          console.log('Pantry updated successfully')
+        } catch (error) {
+          console.error('Failed to update pantry:', error)
+        }
+      }
+    }
+
     const updatedPlan: WeeklyPlan = {
       ...currentPlan,
-      meals: currentPlan.meals.map(meal => 
-        meal.id === mealId 
+      meals: currentPlan.meals.map(m => 
+        m.id === mealId 
           ? { 
-              ...meal, 
+              ...m, 
               completed, 
               completed_by: completed ? ('simon' as const) : undefined,
               completed_at: completed ? new Date().toISOString() : undefined
             }
-          : meal
+          : m
       )
     }
 
     setCurrentPlan(updatedPlan)
     saveWeeklyPlan(updatedPlan)
-  }, [currentPlan, saveWeeklyPlan])
+  }, [currentPlan, saveWeeklyPlan, pantry, updatePantry, recipes])
 
   // Get meals for a specific day
   const getMealsForDay = useCallback((day: DayOfWeek): PlannedMeal[] => {
