@@ -616,5 +616,188 @@ export const sampleRecipes: SimpleRecipe[] = [
     tags: ['test', 'quick'],
     created_by: 'simon',
     created_at: new Date().toISOString()
+  },
+
+  // Simple Recipe 1: Quick Yogurt Breakfast Bowl
+  {
+    id: 'recipe-simple-yogurt-bowl',
+    title: 'Greek Yogurt Berry Bowl',
+    servings: 1,
+    prep_time: 5,
+    cook_time: 0,
+    ingredients: [
+      { name: 'Greek Yogurt', amount: 200, unit: 'g', pantry_item_id: 'dairy-greek-yogurt' },
+      { name: 'Muesli', amount: 50, unit: 'g', pantry_item_id: 'grain-muesli' },
+      { name: 'Maple Syrup', amount: 15, unit: 'ml', pantry_item_id: 'pantry-maple-syrup' },
+      { name: 'Marcona Almonds', amount: 20, unit: 'g', pantry_item_id: 'snack-marcona-almonds' }
+    ],
+    instructions: [
+      'Place Greek yogurt in a bowl',
+      'Top with muesli and chopped almonds',
+      'Drizzle with maple syrup',
+      'Serve immediately for a nutritious breakfast'
+    ],
+    tags: ['breakfast', 'no-cook', 'healthy', 'quick'],
+    created_by: 'simon',
+    created_at: new Date().toISOString()
+  },
+
+  // Simple Recipe 2: Asian-Style Steamed Vegetables
+  {
+    id: 'recipe-simple-asian-vegetables',
+    title: 'Sesame Ginger Vegetables',
+    servings: 4,
+    prep_time: 10,
+    cook_time: 15,
+    ingredients: [
+      { name: 'Broccoli', amount: 400, unit: 'g', pantry_item_id: 'veg-broccoli' },
+      { name: 'Carrots', amount: 200, unit: 'g', pantry_item_id: 'veg-carrots' },
+      { name: 'Fresh Ginger', amount: 15, unit: 'g', pantry_item_id: 'asian-ginger-fresh' },
+      { name: 'Sesame Oil', amount: 15, unit: 'ml', pantry_item_id: 'asian-sesame-oil' },
+      { name: 'Soy Sauce', amount: 20, unit: 'ml', pantry_item_id: 'asian-soy-sauce' },
+      { name: 'Garlic', amount: 2, unit: 'cloves', pantry_item_id: 'veg-garlic' }
+    ],
+    instructions: [
+      'Cut broccoli into florets and slice carrots thinly',
+      'Steam vegetables for 8-10 minutes until tender-crisp',
+      'Grate ginger and mince garlic',
+      'Mix sesame oil, soy sauce, ginger, and garlic',
+      'Toss hot vegetables with dressing and serve'
+    ],
+    tags: ['vegetarian', 'healthy', 'asian', 'side-dish'],
+    created_by: 'simon',
+    created_at: new Date().toISOString()
+  },
+
+  // Simple Recipe 3: Quick Tea-Infused Rice
+  {
+    id: 'recipe-simple-tea-rice',
+    title: 'Earl Grey Infused Rice',
+    servings: 4,
+    prep_time: 5,
+    cook_time: 25,
+    ingredients: [
+      { name: 'Jasmine Rice', amount: 200, unit: 'g' },
+      { name: 'Earl Grey Tea', amount: 2, unit: 'bags', pantry_item_id: 'beverage-earl-grey' },
+      { name: 'Butter', amount: 20, unit: 'g', pantry_item_id: 'dairy-butter' },
+      { name: 'Salt', amount: 3, unit: 'g', pantry_item_id: 'spice-salt' }
+    ],
+    instructions: [
+      'Brew 2 cups strong Earl Grey tea for 5 minutes, remove bags',
+      'Bring tea to boil, add rice and salt',
+      'Reduce heat, cover and simmer 18 minutes',
+      'Let stand 5 minutes, fluff with fork',
+      'Stir in butter before serving'
+    ],
+    tags: ['side-dish', 'unique', 'tea', 'simple'],
+    created_by: 'simon',
+    created_at: new Date().toISOString()
+  },
+
+  // Simple Recipe 4: Mediterranean Chickpea Salad
+  {
+    id: 'recipe-simple-chickpea-salad',
+    title: 'Mediterranean Chickpea Salad',
+    servings: 3,
+    prep_time: 10,
+    cook_time: 0,
+    ingredients: [
+      { name: 'Cooked Chickpeas', amount: 200, unit: 'g', pantry_item_id: 'prepared-chickpeas' },
+      { name: 'Cherry Tomatoes', amount: 100, unit: 'g', pantry_item_id: 'veg-cherry-tomatoes' },
+      { name: 'Olive Oil', amount: 30, unit: 'ml', pantry_item_id: 'pantry-olive-oil' },
+      { name: 'Za\'atar', amount: 5, unit: 'g', pantry_item_id: 'international-za-atar' },
+      { name: 'Sumac', amount: 3, unit: 'g', pantry_item_id: 'international-sumac' },
+      { name: 'Salt', amount: 2, unit: 'g', pantry_item_id: 'spice-salt' }
+    ],
+    instructions: [
+      'Halve the cherry tomatoes',
+      'Combine chickpeas and tomatoes in a bowl',
+      'Mix olive oil, za\'atar, sumac, and salt',
+      'Toss chickpeas with dressing',
+      'Let sit 10 minutes before serving to meld flavors'
+    ],
+    tags: ['vegetarian', 'mediterranean', 'healthy', 'no-cook'],
+    created_by: 'simon',
+    created_at: new Date().toISOString()
+  },
+
+  // Simple Recipe 5: French Herbed Butter Vegetables
+  {
+    id: 'recipe-simple-herbed-vegetables',
+    title: 'Herbes de Provence Roasted Vegetables',
+    servings: 4,
+    prep_time: 15,
+    cook_time: 35,
+    ingredients: [
+      { name: 'Eggplant', amount: 250, unit: 'g', pantry_item_id: 'veg-eggplant' },
+      { name: 'Roma Tomatoes', amount: 100, unit: 'g', pantry_item_id: 'veg-roma-tomatoes' },
+      { name: 'Onions', amount: 1, unit: 'items', pantry_item_id: 'veg-onions' },
+      { name: 'Olive Oil', amount: 40, unit: 'ml', pantry_item_id: 'pantry-olive-oil' },
+      { name: 'Herbes de Provence', amount: 8, unit: 'g', pantry_item_id: 'french-herbs-provence' },
+      { name: 'Garlic', amount: 3, unit: 'cloves', pantry_item_id: 'veg-garlic' }
+    ],
+    instructions: [
+      'Preheat oven to 425°F (220°C)',
+      'Cube eggplant, slice onions, quarter tomatoes',
+      'Toss vegetables with olive oil, herbs, and minced garlic',
+      'Spread on baking sheet, season with salt',
+      'Roast 35 minutes until vegetables are tender and golden'
+    ],
+    tags: ['vegetarian', 'french', 'roasted', 'healthy'],
+    created_by: 'simon',
+    created_at: new Date().toISOString()
+  },
+
+  // Simple Recipe 6: Quick Harissa Marinade for Protein
+  {
+    id: 'recipe-simple-harissa-marinade',
+    title: 'Quick Harissa Chicken Marinade',
+    servings: 4,
+    prep_time: 10,
+    cook_time: 20,
+    ingredients: [
+      { name: 'Chicken Legs/Thighs', amount: 800, unit: 'g', pantry_item_id: 'meat-chicken-legs' },
+      { name: 'Harissa Paste', amount: 25, unit: 'g', pantry_item_id: 'international-harissa' },
+      { name: 'Plain Yogurt', amount: 100, unit: 'g', pantry_item_id: 'dairy-plain-yogurt' },
+      { name: 'Olive Oil', amount: 20, unit: 'ml', pantry_item_id: 'pantry-olive-oil' },
+      { name: 'Garlic', amount: 2, unit: 'cloves', pantry_item_id: 'veg-garlic' },
+      { name: 'Salt', amount: 5, unit: 'g', pantry_item_id: 'spice-salt' }
+    ],
+    instructions: [
+      'Mix harissa, yogurt, olive oil, minced garlic, and salt',
+      'Marinate chicken in mixture for at least 30 minutes',
+      'Preheat oven to 400°F (200°C)',
+      'Bake chicken 20-25 minutes until cooked through',
+      'Serve with rice or vegetables'
+    ],
+    tags: ['middle-eastern', 'marinated', 'spicy', 'protein'],
+    created_by: 'simon',
+    created_at: new Date().toISOString()
+  },
+
+  // Simple Recipe 7: Quick Miso Soup
+  {
+    id: 'recipe-simple-miso-soup',
+    title: 'Simple White Miso Soup',
+    servings: 2,
+    prep_time: 5,
+    cook_time: 10,
+    ingredients: [
+      { name: 'White Miso Paste', amount: 30, unit: 'g', pantry_item_id: 'international-miso-paste' },
+      { name: 'Firm Tofu', amount: 100, unit: 'g', pantry_item_id: 'protein-tofu' },
+      { name: 'Fresh Ginger', amount: 10, unit: 'g', pantry_item_id: 'asian-ginger-fresh' },
+      { name: 'Garlic', amount: 1, unit: 'cloves', pantry_item_id: 'veg-garlic' },
+      { name: 'Sesame Oil', amount: 5, unit: 'ml', pantry_item_id: 'asian-sesame-oil' }
+    ],
+    instructions: [
+      'Bring 500ml water to simmer with grated ginger and garlic',
+      'Simmer 5 minutes, then strain out solids',
+      'Whisk miso paste with small amount of hot broth',
+      'Add miso mixture back to pot, add cubed tofu',
+      'Heat through without boiling, drizzle with sesame oil'
+    ],
+    tags: ['japanese', 'soup', 'vegetarian', 'quick'],
+    created_by: 'simon',
+    created_at: new Date().toISOString()
   }
 ]
