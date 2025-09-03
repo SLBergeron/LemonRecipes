@@ -14,6 +14,9 @@ export interface SimplePantryItem {
   added_by: UserId
   updated_at: string
   min_buy_amount?: number // Minimum amount to buy when shopping
+  normal_restock_level?: number // Target amount when restocking
+  restock_unit?: string // Unit for restocking (may differ from current unit)
+  low_stock_threshold?: number // Custom low stock threshold
 }
 
 export interface PantryCategory {

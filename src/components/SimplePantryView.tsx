@@ -83,6 +83,15 @@ export function SimplePantryView() {
     }
   }
 
+  const handleDirectUpdateAmount = async (itemId: string, newAmount: number) => {
+    if (newAmount < 0) return
+    try {
+      await updateItemAmount(itemId, newAmount)
+    } catch (err) {
+      console.error('Failed to update amount:', err)
+    }
+  }
+
   const handleDeleteItem = async (itemId: string) => {
     if (confirm('Remove this item from your pantry?')) {
       try {
@@ -271,6 +280,7 @@ export function SimplePantryView() {
                       key={item.id}
                       item={item}
                       onUpdateAmount={handleUpdateAmount}
+                      onUpdateDirectAmount={handleDirectUpdateAmount}
                       onDelete={handleDeleteItem}
                     />
                   ))}
@@ -299,13 +309,30 @@ export function SimplePantryView() {
 interface ItemRowProps {
   item: SimplePantryItem
   onUpdateAmount: (itemId: string, currentAmount: number, delta: number) => void
+  onUpdateDirectAmount: (itemId: string, newAmount: number) => void
   onDelete: (itemId: string) => void
 }
 
-function ItemRow({ item, onUpdateAmount, onDelete }: ItemRowProps) {
+function ItemRow({ item, onUpdateAmount, onUpdateDirectAmount, onDelete }: ItemRowProps) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [editAmount, setEditAmount] = useState(item.current_amount.toString())
+
   const isLowStock = item.unit === 'items' || item.unit === 'cans' || item.unit === 'bottles'
     ? item.current_amount < 2
     : item.current_amount < 1
+
+  const handleSave = () => {
+    const newAmount = parseFloat(editAmount)
+    if (!isNaN(newAmount) && newAmount >= 0) {
+      onUpdateDirectAmount(item.id, newAmount)
+    }
+    setIsEditing(false)
+  }
+
+  const handleCancel = () => {
+    setEditAmount(item.current_amount.toString())
+    setIsEditing(false)
+  }
 
   return (
     <div className="flex items-center justify-between p-3 border rounded-lg">
@@ -328,21 +355,46 @@ function ItemRow({ item, onUpdateAmount, onDelete }: ItemRowProps) {
           variant="outline"
           size="sm"
           onClick={() => onUpdateAmount(item.id, item.current_amount, -1)}
-          disabled={item.current_amount <= 0}
+          disabled={item.current_amount <= 0 || isEditing}
         >
           <Minus className="h-3 w-3" />
         </Button>
         
         <div className="min-w-24 text-center">
-          <div className="font-mono">
-            {item.current_amount} {item.unit}
-          </div>
+          {isEditing ? (
+            <div className="flex items-center gap-1">
+              <Input
+                type="number"
+                value={editAmount}
+                onChange={(e) => setEditAmount(e.target.value)}
+                className="w-16 h-8 text-sm text-center"
+                step="0.1"
+                min="0"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSave()
+                  if (e.key === 'Escape') handleCancel()
+                }}
+                autoFocus
+                onBlur={handleSave}
+              />
+              <span className="text-xs text-muted-foreground">{item.unit}</span>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="font-mono hover:bg-gray-100 px-2 py-1 rounded transition-colors"
+              title="Click to edit quantity"
+            >
+              {item.current_amount} {item.unit}
+            </button>
+          )}
         </div>
         
         <Button
           variant="outline"
           size="sm"
           onClick={() => onUpdateAmount(item.id, item.current_amount, 1)}
+          disabled={isEditing}
         >
           <Plus className="h-3 w-3" />
         </Button>
@@ -352,6 +404,7 @@ function ItemRow({ item, onUpdateAmount, onDelete }: ItemRowProps) {
           size="sm"
           onClick={() => onDelete(item.id)}
           className="text-destructive hover:text-destructive"
+          disabled={isEditing}
         >
           <Trash2 className="h-4 w-4" />
         </Button>

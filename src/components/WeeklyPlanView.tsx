@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar, Plus, Check, Clock, Users, Trash2, ChefHat, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react"
+import { Calendar, Plus, Check, Clock, Users, Trash2, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react"
 import { useWeeklyPlan } from '@/hooks/useWeeklyPlan'
 import { useSimpleRecipes } from '@/hooks/useSimpleRecipes'
 import { useSimplePantry } from '@/hooks/useSimplePantry'
@@ -46,6 +46,7 @@ export function WeeklyPlanView() {
   } = useWeeklyPlan(recipes, pantry)
 
   const [showAddMeal, setShowAddMeal] = useState(false)
+  const [showQuickAdd, setShowQuickAdd] = useState(false)
   const [selectedDay, setSelectedDay] = useState<DayOfWeek>('monday')
   const [selectedMealType, setSelectedMealType] = useState<MealType>('dinner')
   const [selectedRecipe, setSelectedRecipe] = useState<string>('')
@@ -104,6 +105,25 @@ export function WeeklyPlanView() {
       await markMealCompleted(mealId, completed)
     } catch (err) {
       console.error('Failed to update meal status:', err)
+    }
+  }
+
+  const handleQuickAddMeal = (day: DayOfWeek, mealType: MealType = 'dinner') => {
+    setSelectedDay(day)
+    setSelectedMealType(mealType)
+    setSelectedRecipe('')
+    setShowQuickAdd(true)
+  }
+
+  const handleQuickAddSubmit = async () => {
+    if (!selectedRecipe) return
+    
+    try {
+      await addMealToPlan(selectedDay, selectedMealType, selectedRecipe, servings)
+      setShowQuickAdd(false)
+      setSelectedRecipe('')
+    } catch (err) {
+      console.error('Failed to add meal:', err)
     }
   }
 
@@ -253,6 +273,87 @@ export function WeeklyPlanView() {
         </Card>
       )}
 
+      {/* Quick Add Meal Modal */}
+      {showQuickAdd && (
+        <Card className="border-blue-200 bg-blue-50">
+          <CardHeader>
+            <CardTitle className="text-blue-800">Quick Add Meal - {DAYS.find(d => d.id === selectedDay)?.name}</CardTitle>
+            <CardDescription>Quickly add a recipe to your meal plan</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Meal Type</label>
+                <Select value={selectedMealType} onValueChange={(value: MealType) => setSelectedMealType(value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MEAL_TYPES.map(mealType => (
+                      <SelectItem key={mealType.id} value={mealType.id}>
+                        {mealType.icon} {mealType.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Servings</label>
+                <Select value={servings.toString()} onValueChange={(value) => setServings(parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[1,2,3,4,5,6,7,8].map(num => (
+                      <SelectItem key={num} value={num.toString()}>
+                        {num} servings
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Recipe</label>
+              <Select value={selectedRecipe} onValueChange={setSelectedRecipe}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose a recipe" />
+                </SelectTrigger>
+                <SelectContent>
+                  <div className="text-xs text-muted-foreground p-2 border-b">Can Make Now</div>
+                  {availableRecipes.map(recipe => (
+                    <SelectItem key={recipe.id} value={recipe.id}>
+                      ✅ {recipe.title}
+                    </SelectItem>
+                  ))}
+                  {availableRecipes.length === 0 && (
+                    <div className="text-xs text-muted-foreground p-2">No recipes available with current pantry</div>
+                  )}
+                  
+                  <div className="text-xs text-muted-foreground p-2 border-b border-t mt-2">All Recipes</div>
+                  {allRecipes.filter(r => !r.can_make).map(recipe => (
+                    <SelectItem key={recipe.id} value={recipe.id}>
+                      ⚠️ {recipe.title} (missing ingredients)
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex gap-2">
+              <Button onClick={handleQuickAddSubmit} disabled={!selectedRecipe} className="bg-blue-600 hover:bg-blue-700">
+                Add to {DAYS.find(d => d.id === selectedDay)?.name}
+              </Button>
+              <Button variant="outline" onClick={() => setShowQuickAdd(false)}>
+                Cancel
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Weekly Calendar */}
       <div className="grid gap-4">
         {DAYS.map(day => {
@@ -333,10 +434,15 @@ export function WeeklyPlanView() {
                     })}
                   </div>
                 ) : (
-                  <div className="text-center py-6 text-muted-foreground">
-                    <ChefHat className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                    <p>No meals planned for {day.name}</p>
-                  </div>
+                  <button
+                    onClick={() => handleQuickAddMeal(day.id)}
+                    className="w-full text-center py-6 text-muted-foreground hover:bg-gray-50 rounded-lg transition-colors group"
+                    title={`Click to add a meal for ${day.name}`}
+                  >
+                    <Plus className="h-8 w-8 mx-auto mb-2 opacity-50 group-hover:opacity-100 transition-opacity" />
+                    <p>Click to add meal for {day.name}</p>
+                    <p className="text-xs opacity-70 group-hover:opacity-100">Quick add recipes</p>
+                  </button>
                 )}
               </CardContent>
             </Card>
