@@ -1,151 +1,58 @@
-import type { PantryInventory, PantryCategory, PantryItem } from '@/types/pantry'
+import { useState } from 'react'
+import type { PantryInventory as PantryInventoryType, PantryCategory, PantryItem } from '@/types/pantry'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Plus, Minus, AlertTriangle } from 'lucide-react'
+import { Plus, AlertTriangle, Settings } from 'lucide-react'
+import { PantryItemCard } from './PantryItemCard'
+import { AddItemModal } from './AddItemModal'
+import { EditItemModal } from './EditItemModal'
+import { AddCategoryModal } from './AddCategoryModal'
+import { EditCategoryModal } from './EditCategoryModal'
+import { usePantryInventory } from '@/hooks/usePantryInventory'
 
 interface PantryInventoryProps {
-  pantry: PantryInventory
-  onUpdateAmount?: (itemId: string, newAmount: string) => void
+  pantry: PantryInventoryType
 }
 
-interface PantryItemCardProps {
-  item: PantryItem
-  onUpdateAmount?: (itemId: string, newAmount: string) => void
-}
-
-function PantryItemCard({ item, onUpdateAmount }: PantryItemCardProps) {
-  const getStockLevel = (item: PantryItem): { level: 'low' | 'medium' | 'high'; percentage: number } => {
-    if (item.unit === '%') {
-      const percentage = parseInt(item.current_amount.replace('%', ''))
-      return {
-        level: percentage < 30 ? 'low' : percentage < 70 ? 'medium' : 'high',
-        percentage
-      }
-    }
-    
-    // For unit-based items, estimate percentage based on current vs total capacity
-    const current = parseInt(item.current_amount.replace(/[^0-9]/g, ''))
-    const total = parseInt(item.total_capacity.replace(/[^0-9]/g, ''))
-    const percentage = Math.round((current / total) * 100)
-    
-    return {
-      level: percentage < 30 ? 'low' : percentage < 70 ? 'medium' : 'high',
-      percentage
-    }
-  }
-
-  const getExpirationStatus = (expires: string): { status: 'expired' | 'expiring' | 'fresh'; daysLeft: number } => {
-    const expiryDate = new Date(expires)
-    const today = new Date()
-    const daysLeft = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-    
-    return {
-      status: daysLeft < 0 ? 'expired' : daysLeft < 14 ? 'expiring' : 'fresh',
-      daysLeft
-    }
-  }
-
-  const { level, percentage } = getStockLevel(item)
-  const { status: expirationStatus, daysLeft } = getExpirationStatus(item.expires)
-
-  return (
-    <Card className="relative">
-      <CardContent className="p-4">
-        <div className="space-y-3">
-          <div className="flex items-start justify-between">
-            <div className="space-y-1">
-              <h4 className="font-medium text-sm">{item.name}</h4>
-              <p className="text-xs text-muted-foreground">
-                {item.current_amount} of {item.total_capacity}
-              </p>
-            </div>
-            
-            <div className="flex flex-col items-end space-y-1">
-              <span className={`text-xs px-2 py-1 rounded ${
-                level === 'low' ? 'bg-red-100 text-red-800' :
-                level === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                'bg-green-100 text-green-800'
-              }`}>
-                {percentage}%
-              </span>
-              
-              {expirationStatus !== 'fresh' && (
-                <span className={`text-xs px-2 py-1 rounded flex items-center ${
-                  expirationStatus === 'expired' ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800'
-                }`}>
-                  <AlertTriangle className="w-3 h-3 mr-1" />
-                  {expirationStatus === 'expired' ? 'Expired' : `${daysLeft}d left`}
-                </span>
-              )}
-            </div>
-          </div>
-          
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className={`h-2 rounded-full transition-all duration-300 ${
-                level === 'low' ? 'bg-red-500' :
-                level === 'medium' ? 'bg-yellow-500' :
-                'bg-green-500'
-              }`}
-              style={{ width: `${percentage}%` }}
-            />
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">
-              Expires: {new Date(item.expires).toLocaleDateString()}
-            </p>
-            <p className="text-xs font-medium">
-              ${item.price_per_unit}
-            </p>
-          </div>
-          
-          {onUpdateAmount && (
-            <div className="flex items-center space-x-2 pt-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  // Implement decrease logic
-                  console.log('Decrease', item.id)
-                }}
-              >
-                <Minus className="w-3 h-3" />
-              </Button>
-              
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  // Implement increase logic
-                  console.log('Increase', item.id)
-                }}
-              >
-                <Plus className="w-3 h-3" />
-              </Button>
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
 
 interface PantryCategoryProps {
   category: PantryCategory
-  onUpdateAmount?: (itemId: string, newAmount: string) => void
+  onEditItem: (item: PantryItem) => void
+  onDeleteItem: (itemId: string) => void
+  onUpdateAmount: (itemId: string, newAmount: string) => void
+  onEditCategory: (category: PantryCategory) => void
+  showManagementActions: boolean
 }
 
-function PantryCategoryCard({ category, onUpdateAmount }: PantryCategoryProps) {
+function PantryCategoryCard({ 
+  category, 
+  onEditItem, 
+  onDeleteItem, 
+  onUpdateAmount, 
+  onEditCategory,
+  showManagementActions 
+}: PantryCategoryProps) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center space-x-2 text-base">
-          <span className="text-lg">{category.emoji}</span>
-          <span>{category.title}</span>
-          <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full">
-            {category.items.length}
-          </span>
+        <CardTitle className="flex items-center justify-between text-base">
+          <div className="flex items-center space-x-2">
+            <span className="text-lg">{category.emoji}</span>
+            <span>{category.title}</span>
+            <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full">
+              {category.items.length}
+            </span>
+          </div>
+          {showManagementActions && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => onEditCategory(category)}
+              className="h-6 w-6 p-0"
+            >
+              <Settings className="h-3 w-3" />
+            </Button>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -153,7 +60,10 @@ function PantryCategoryCard({ category, onUpdateAmount }: PantryCategoryProps) {
           <PantryItemCard
             key={item.id}
             item={item}
+            onEdit={onEditItem}
+            onDelete={onDeleteItem}
             onUpdateAmount={onUpdateAmount}
+            showManagementActions={showManagementActions}
           />
         ))}
       </CardContent>
@@ -161,7 +71,28 @@ function PantryCategoryCard({ category, onUpdateAmount }: PantryCategoryProps) {
   )
 }
 
-export function PantryInventory({ pantry, onUpdateAmount }: PantryInventoryProps) {
+export function PantryInventory({ pantry }: PantryInventoryProps) {
+  const [showManagementActions, setShowManagementActions] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [selectedItem, setSelectedItem] = useState<PantryItem | null>(null)
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false)
+  const [showEditCategoryModal, setShowEditCategoryModal] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<PantryCategory | null>(null)
+
+  const {
+    addItem,
+    updateItem,
+    deleteItem,
+    updateItemAmount,
+    addCategory,
+    updateCategory,
+    removeCategory,
+    notifications,
+    clearNotification,
+    loading
+  } = usePantryInventory()
+
   const totalItems = pantry.categories.reduce((sum, cat) => sum + cat.items.length, 0)
   const lowStockItems = pantry.categories
     .flatMap(cat => cat.items)
@@ -174,8 +105,54 @@ export function PantryInventory({ pantry, onUpdateAmount }: PantryInventoryProps
       return (current / total) < 0.3
     })
 
+  const handleEditItem = (item: PantryItem) => {
+    setSelectedItem(item)
+    setShowEditModal(true)
+  }
+
+  const handleDeleteItem = async (itemId: string) => {
+    await deleteItem(itemId)
+  }
+
+  const handleUpdateItemAmount = async (itemId: string, newAmount: string) => {
+    await updateItemAmount(itemId, newAmount)
+  }
+
+  const handleEditCategory = (category: PantryCategory) => {
+    setSelectedCategory(category)
+    setShowEditCategoryModal(true)
+  }
+
+  const handleDeleteCategory = async (categoryId: string) => {
+    await removeCategory(categoryId)
+  }
+
   return (
     <div className="space-y-4">
+      {/* Notifications */}
+      {notifications.map((notification) => (
+        <div
+          key={notification.id}
+          className={`p-3 rounded-md border ${
+            notification.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+            notification.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+            'bg-blue-50 border-blue-200 text-blue-800'
+          }`}
+        >
+          <div className="flex justify-between items-center">
+            <span className="text-sm">{notification.message}</span>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => clearNotification(notification.id)}
+              className="h-6 w-6 p-0"
+            >
+              ×
+            </Button>
+          </div>
+        </div>
+      ))}
+
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold">Pantry Inventory</h2>
@@ -193,6 +170,37 @@ export function PantryInventory({ pantry, onUpdateAmount }: PantryInventoryProps
           <div className="text-center">
             <p className="text-2xl font-bold text-orange-600">{lowStockItems.length}</p>
             <p className="text-xs text-muted-foreground">Low Stock</p>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Button
+              size="sm"
+              variant={showManagementActions ? 'default' : 'outline'}
+              onClick={() => setShowManagementActions(!showManagementActions)}
+            >
+              <Settings className="w-4 h-4 mr-1" />
+              {showManagementActions ? 'Done' : 'Manage'}
+            </Button>
+            
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setShowAddCategoryModal(true)}
+              disabled={loading}
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Category
+            </Button>
+            
+            <Button
+              size="sm"
+              variant="lemon"
+              onClick={() => setShowAddModal(true)}
+              disabled={loading}
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Add Item
+            </Button>
           </div>
         </div>
       </div>
@@ -220,10 +228,58 @@ export function PantryInventory({ pantry, onUpdateAmount }: PantryInventoryProps
           <PantryCategoryCard
             key={category.id}
             category={category}
-            onUpdateAmount={onUpdateAmount}
+            onEditItem={handleEditItem}
+            onDeleteItem={handleDeleteItem}
+            onUpdateAmount={handleUpdateItemAmount}
+            onEditCategory={handleEditCategory}
+            showManagementActions={showManagementActions}
           />
         ))}
       </div>
+
+      {/* Add Item Modal */}
+      <AddItemModal
+        open={showAddModal}
+        onOpenChange={setShowAddModal}
+        onAddItem={addItem}
+        categories={pantry.categories}
+        loading={loading}
+      />
+
+      {/* Edit Item Modal */}
+      <EditItemModal
+        open={showEditModal}
+        onOpenChange={(open) => {
+          setShowEditModal(open)
+          if (!open) setSelectedItem(null)
+        }}
+        onUpdateItem={updateItem}
+        onDeleteItem={handleDeleteItem}
+        item={selectedItem}
+        categories={pantry.categories}
+        loading={loading}
+      />
+
+      {/* Add Category Modal */}
+      <AddCategoryModal
+        open={showAddCategoryModal}
+        onOpenChange={setShowAddCategoryModal}
+        onAddCategory={addCategory}
+        loading={loading}
+      />
+
+      {/* Edit Category Modal */}
+      <EditCategoryModal
+        open={showEditCategoryModal}
+        onOpenChange={(open) => {
+          setShowEditCategoryModal(open)
+          if (!open) setSelectedCategory(null)
+        }}
+        onUpdateCategory={updateCategory}
+        onDeleteCategory={handleDeleteCategory}
+        category={selectedCategory}
+        loading={loading}
+      />
     </div>
   )
 }

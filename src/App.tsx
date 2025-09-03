@@ -14,7 +14,7 @@ function App() {
   const [activeView, setActiveView] = useState<'meal-plan' | 'grocery-list' | 'timeline' | 'pantry'>('meal-plan')
   const [mealPlan, setMealPlan] = useState<MealPlan | null>(null)
   const [loading, setLoading] = useState(true)
-  const { pantry, updateItemAmount } = usePantryInventory()
+  const { pantry } = usePantryInventory()
 
   useEffect(() => {
     const loadMealPlan = async () => {
@@ -203,10 +203,7 @@ function App() {
         )}
 
         {activeView === 'pantry' && pantry && (
-          <PantryInventory 
-            pantry={pantry} 
-            onUpdateAmount={updateItemAmount}
-          />
+          <PantryInventory pantry={pantry} />
         )}
       </main>
     </div>
