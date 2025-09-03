@@ -11,6 +11,7 @@ import {
   isLowStock,
   getCurrentUser
 } from '@/lib/simple-utils'
+import { initialPantryData } from '@/data/initial-pantry'
 
 // Hook for managing simplified pantry inventory
 export function useSimplePantry() {
@@ -18,14 +19,17 @@ export function useSimplePantry() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Initialize pantry with default structure if not exists
+  // Initialize pantry with default structure and initial data
   const initializePantry = useCallback((): SimplePantryInventory => {
+    // Group initial items by category
+    const categorizedItems = DEFAULT_CATEGORIES.map(cat => ({
+      ...cat,
+      items: initialPantryData.filter(item => item.category === cat.id)
+    }))
+
     return {
       last_updated: new Date().toISOString(),
-      categories: DEFAULT_CATEGORIES.map(cat => ({
-        ...cat,
-        items: []
-      }))
+      categories: categorizedItems
     }
   }, [])
 
